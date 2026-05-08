@@ -20,3 +20,23 @@ model Question {
   answer    String
   createdAt DateTime @default(now())
 }
+
+model McqQuestion {
+  id        Int         @id @default(autoincrement())
+  topic     String
+  question  String
+  hint      String?
+  createdAt DateTime    @default(now())
+  options   McqOption[]
+}
+
+model McqOption {
+  id         Int         @id @default(autoincrement())
+  questionId Int
+  question   McqQuestion @relation(fields: [questionId], references: [id], onDelete: Cascade)
+  text       String
+  isCorrect  Boolean     @default(false)
+  sortOrder  Int         @default(0)
+
+  @@index([questionId])
+}

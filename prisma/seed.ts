@@ -240,6 +240,108 @@ const seedQuestions = [
   ...browserPipelineQuestions,
 ];
 
+const mcqSeed: {
+  topic: string;
+  question: string;
+  hint?: string;
+  options: [string, string, string, string];
+  correctIndex: 0 | 1 | 2 | 3;
+}[] = [
+  {
+    topic: httpsTlsTopic,
+    question: "Какой порт по умолчанию использует HTTPS?",
+    hint: "Стандартный порт «защищённого» веба.",
+    options: ["80", "443", "8080", "3000"],
+    correctIndex: 1,
+  },
+  {
+    topic: httpsTlsTopic,
+    question: "Какой порт по умолчанию использует HTTP без TLS?",
+    options: ["443", "80", "22", "5432"],
+    correctIndex: 1,
+  },
+  {
+    topic: httpsTlsTopic,
+    question:
+      "В каком порядке обычно выполняются этапы при обращении к сайту по HTTPS?",
+    options: [
+      "Сначала TLS handshake, затем установление TCP",
+      "Сначала TCP handshake, затем TLS handshake, затем HTTP внутри TLS",
+      "Сначала HTTP-запрос, затем TCP и TLS",
+      "Только TLS без TCP",
+    ],
+    correctIndex: 1,
+  },
+  {
+    topic: httpsTlsTopic,
+    question: "Какой пакет клиент отправляет первым при установлении TCP-соединения?",
+    options: ["ACK", "SYN", "FIN", "RST"],
+    correctIndex: 1,
+  },
+  {
+    topic: "CORS",
+    question:
+      "Что произойдёт, если запрос с credentials: 'include' успешен по сети, а сервер ответил Access-Control-Allow-Origin: *?",
+    hint: "Правила CORS для кук и wildcard.",
+    options: [
+      "Браузер примет ответ без ограничений",
+      "Браузер заблокирует доступ к ответу из JS из‑за несовместимости credentials и *",
+      "Сработает только для GET",
+      "Блокируется только если метод DELETE",
+    ],
+    correctIndex: 1,
+  },
+  {
+    topic: "CORS",
+    question:
+      "Какой Content-Type делает запрос не «простым» (simple), даже если метод POST?",
+    options: [
+      "application/x-www-form-urlencoded",
+      "multipart/form-data",
+      "text/plain",
+      "application/json",
+    ],
+    correctIndex: 3,
+  },
+  {
+    topic: browserPipelineTopic,
+    question:
+      "Где в первую очередь браузер ищет соответствие домена и IP до запроса к внешнему DNS?",
+    options: [
+      "Только у интернет-провайдера",
+      "Кэш браузера и ОС (включая hosts), затем при необходимости DNS-сервер",
+      "Сразу у корневых DNS-серверов в интернете",
+      "Только в файле hosts",
+    ],
+    correctIndex: 1,
+  },
+  {
+    topic: browserPipelineTopic,
+    question:
+      "Что из перечисленного верно про отрисовку страницы в браузере?",
+    options: [
+      "Paint всегда выполняется до построения DOM",
+      "DOM строится из HTML; CSS формирует CSSOM; затем layout и paint",
+      "Render Tree не зависит от CSS",
+      "JavaScript не может вызвать повторный layout",
+    ],
+    correctIndex: 1,
+  },
+  {
+    topic: browserPipelineTopic,
+    question:
+      "Какой правильный порядок действий описывает типичный процесс загрузки веб-страницы после того, как пользователь ввёл https://example.com в адресную строку браузера и нажал Enter?",
+    hint: "Сначала нужен IP (DNS), затем канал TCP; для HTTPS после TCP идёт TLS, затем HTTP и отрисовка.",
+    options: [
+      "Установка TCP-соединения → DNS-поиск IP-адреса → отправка HTTP-запроса → получение ответа → отрисовка страницы.",
+      "DNS-поиск IP-адреса → установка TCP-соединения → TLS handshake (для HTTPS) → отправка HTTP-запроса → получение ответа → отрисовка страницы.",
+      "Отправка HTTP-запроса → DNS-поиск IP-адреса → установка TCP-соединения → получение ответа → отрисовка страницы.",
+      "Установка TLS-соединения → DNS-поиск IP-адреса → TCP handshake → отправка HTTP-запроса → отрисовка страницы → получение ответа.",
+    ],
+    correctIndex: 1,
+  },
+];
+
 async function main() {
   for (const row of seedQuestions) {
     const existing = await prisma.question.findFirst({
@@ -248,6 +350,28 @@ async function main() {
     if (!existing) {
       await prisma.question.create({ data: row });
     }
+  }
+
+  for (const row of mcqSeed) {
+    const existing = await prisma.mcqQuestion.findFirst({
+      where: { topic: row.topic, question: row.question },
+    });
+    if (existing) continue;
+
+    await prisma.mcqQuestion.create({
+      data: {
+        topic: row.topic,
+        question: row.question,
+        hint: row.hint ?? null,
+        options: {
+          create: row.options.map((text, i) => ({
+            text,
+            isCorrect: i === row.correctIndex,
+            sortOrder: i,
+          })),
+        },
+      },
+    });
   }
 }
 

@@ -1,13 +1,13 @@
-import type { Metadata } from "next";
+import MarkdownArticle from "@/components/MarkdownArticle";
+import QuizPageShell from "@/components/QuizPageShell";
+import SiteHeader from "@/components/SiteHeader";
+import TheoryNavLink from "@/components/TheoryNavLink";
+import { urlBrowserMarkdown } from "@/content/theory/urlBrowserMarkdown";
 import Card from "@mui/material/Card";
 import CardContent from "@mui/material/CardContent";
 import Stack from "@mui/material/Stack";
 import Typography from "@mui/material/Typography";
-import MarkdownArticle from "@/components/MarkdownArticle";
-import TheoryNavLink from "@/components/TheoryNavLink";
-import QuizPageShell from "@/components/QuizPageShell";
-import SiteHeader from "@/components/SiteHeader";
-import { urlBrowserMarkdown } from "@/content/theory/urlBrowserMarkdown";
+import type { Metadata } from "next";
 
 export const metadata: Metadata = {
   title: "URL и браузер — Теория — Quiz",
@@ -27,7 +27,7 @@ export default function UrlBrowserTheoryPage() {
           <TheoryNavLink
             href="/theory/url-browser/order"
             underline="hover"
-            sx={{ fontWeight: 600 }}
+            sx={{ fontWeight: 500, fontSize: "1.25rem" }}
           >
             Упражнение: расставить этапы по порядку (drag & drop)
           </TheoryNavLink>

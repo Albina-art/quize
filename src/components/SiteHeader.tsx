@@ -1,7 +1,6 @@
 "use client";
 
-import Link from "next/link";
-import { usePathname } from "next/navigation";
+import FactCheckRoundedIcon from "@mui/icons-material/FactCheckRounded";
 import MenuBookRoundedIcon from "@mui/icons-material/MenuBookRounded";
 import QuizRoundedIcon from "@mui/icons-material/QuizRounded";
 import Box from "@mui/material/Box";
@@ -9,6 +8,8 @@ import Button from "@mui/material/Button";
 import Chip from "@mui/material/Chip";
 import Stack from "@mui/material/Stack";
 import Typography from "@mui/material/Typography";
+import Link from "next/link";
+import { usePathname } from "next/navigation";
 
 export default function SiteHeader({
   title,
@@ -19,16 +20,18 @@ export default function SiteHeader({
 }>) {
   const pathname = usePathname();
   const theoryActive = pathname.startsWith("/theory");
+  const mcqActive = pathname === "/mcq";
 
   return (
     <Stack spacing={2}>
       <Box
         sx={{
           display: "grid",
-          gridTemplateColumns: { xs: "1fr", sm: "repeat(3, 1fr)" },
+          gridTemplateColumns: { xs: "repeat(2, 1fr)", sm: "repeat(4, 1fr)" },
           gap: 1,
           width: "100%",
-          maxWidth: 720,
+          maxWidth: 960,
+          marginBottom: "20px !important",
         }}
       >
         <Button
@@ -40,6 +43,16 @@ export default function SiteHeader({
           sx={{ width: "100%", justifyContent: "center" }}
         >
           Тренировка
+        </Button>
+        <Button
+          component={Link}
+          href="/mcq"
+          variant={mcqActive ? "contained" : "outlined"}
+          color={mcqActive ? "secondary" : "inherit"}
+          size="medium"
+          sx={{ width: "100%", justifyContent: "center" }}
+        >
+          Тест
         </Button>
         <Button
           component={Link}
@@ -65,9 +78,21 @@ export default function SiteHeader({
 
       <Stack spacing={1} sx={{ alignItems: "flex-start" }}>
         <Chip
-          icon={theoryActive ? <MenuBookRoundedIcon /> : <QuizRoundedIcon />}
+          icon={
+            theoryActive ? (
+              <MenuBookRoundedIcon />
+            ) : mcqActive ? (
+              <FactCheckRoundedIcon />
+            ) : (
+              <QuizRoundedIcon />
+            )
+          }
           label={
-            theoryActive ? "Теория · конспекты" : "PostgreSQL · случайная выдача"
+            theoryActive
+              ? "Теория · конспекты"
+              : mcqActive
+                ? "Тест · варианты ответов"
+                : "PostgreSQL · случайная выдача"
           }
           color="secondary"
           variant="outlined"

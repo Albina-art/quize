@@ -13,10 +13,14 @@ import CardContent from "@mui/material/CardContent";
 import Chip from "@mui/material/Chip";
 import Collapse from "@mui/material/Collapse";
 import Divider from "@mui/material/Divider";
+import FormControl from "@mui/material/FormControl";
+import InputLabel from "@mui/material/InputLabel";
+import MenuItem from "@mui/material/MenuItem";
+import Select from "@mui/material/Select";
 import Stack from "@mui/material/Stack";
 import Typography from "@mui/material/Typography";
 import { alpha } from "@mui/material/styles";
-import { useState } from "react";
+import { useCallback, useEffect, useState } from "react";
 
 type Question = {
   id: number;
@@ -26,6 +30,8 @@ type Question = {
   answer: string;
 };
 
+const ALL_TOPICS_VALUE = "";
+
 export default function Home() {
   const [message, setMessage] = useState("");
   const [messageSeverity, setMessageSeverity] = useState<"success" | "error">(
@@ -34,11 +40,40 @@ export default function Home() {
   const [current, setCurrent] = useState<Question | null>(null);
   const [showHint, setShowHint] = useState(false);
   const [showAnswer, setShowAnswer] = useState(false);
+  const [topics, setTopics] = useState<string[]>([]);
+  const [topicsLoaded, setTopicsLoaded] = useState(false);
+  const [topicFilter, setTopicFilter] = useState<string>(ALL_TOPICS_VALUE);
 
-  async function getRandomQuestion() {
+  useEffect(() => {
+    let cancelled = false;
+    (async () => {
+      try {
+        const res = await fetch("/api/questions/topics");
+        const data = (await res.json()) as { topics?: string[]; error?: string };
+        if (!res.ok || !data.topics) {
+          if (!cancelled) setTopics([]);
+          return;
+        }
+        if (!cancelled) setTopics(data.topics);
+      } catch {
+        if (!cancelled) setTopics([]);
+      } finally {
+        if (!cancelled) setTopicsLoaded(true);
+      }
+    })();
+    return () => {
+      cancelled = true;
+    };
+  }, []);
+
+  const getRandomQuestion = useCallback(async () => {
     setShowHint(false);
     setShowAnswer(false);
-    const response = await fetch("/api/questions/random");
+    const qs =
+      topicFilter === ALL_TOPICS_VALUE
+        ? ""
+        : `?topic=${encodeURIComponent(topicFilter)}`;
+    const response = await fetch(`/api/questions/random${qs}`);
     const data = (await response.json()) as Question & { error?: string };
 
     if (!response.ok) {
@@ -50,14 +85,14 @@ export default function Home() {
 
     setMessage("");
     setCurrent(data);
-  }
+  }, [topicFilter]);
 
   return (
     <QuizPageShell>
       <Stack spacing={3}>
         <SiteHeader
           title="Тренажёр вопросов"
-          subtitle="Получайте случайные карточки из базы. Новые вопросы добавляйте на странице «Новая карточка»."
+          subtitle="Выберите тему или тренируйтесь по всей базе. Новые карточки — на странице «Новая карточка»."
         />
 
         {message ? (
@@ -75,6 +110,30 @@ export default function Home() {
               Получите карточку из базы и проверьте себя.
             </Typography>
 
+            <FormControl fullWidth sx={{ mb: 2 }} disabled={!topicsLoaded}>
+              <InputLabel id="trainer-topic-label">Тема</InputLabel>
+              <Select
+                labelId="trainer-topic-label"
+                id="trainer-topic"
+                value={topicFilter}
+                label="Тема"
+                onChange={(e) => {
+                  setTopicFilter(e.target.value);
+                  setCurrent(null);
+                  setShowHint(false);
+                  setShowAnswer(false);
+                  setMessage("");
+                }}
+              >
+                <MenuItem value={ALL_TOPICS_VALUE}>Все темы</MenuItem>
+                {topics.map((t) => (
+                  <MenuItem key={t} value={t}>
+                    {t}
+                  </MenuItem>
+                ))}
+              </Select>
+            </FormControl>
+
             <Button
               fullWidth
               variant="contained"
@@ -84,7 +143,7 @@ export default function Home() {
               onClick={getRandomQuestion}
               sx={{ mb: 2 }}
             >
-              Другой вопрос
+              Вопрос
             </Button>
 
             {current ? (
@@ -219,7 +278,7 @@ export default function Home() {
               </Stack>
             ) : (
               <Typography variant="body1" color="text.secondary">
-                Нажмите «Другой вопрос», чтобы начать.
+                Нажмите «Вопрос», чтобы начать.
               </Typography>
             )}
           </CardContent>
