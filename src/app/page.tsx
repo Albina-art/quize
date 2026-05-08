@@ -2,6 +2,7 @@
 
 import QuizPageShell from "@/components/QuizPageShell";
 import SiteHeader from "@/components/SiteHeader";
+import TopicChipFilter from "@/components/TopicChipFilter";
 import CasinoRoundedIcon from "@mui/icons-material/CasinoRounded";
 import LightbulbRoundedIcon from "@mui/icons-material/LightbulbRounded";
 import VisibilityRoundedIcon from "@mui/icons-material/VisibilityRounded";
@@ -21,6 +22,8 @@ import Stack from "@mui/material/Stack";
 import Typography from "@mui/material/Typography";
 import { alpha } from "@mui/material/styles";
 import { useCallback, useEffect, useState } from "react";
+import QuizStatsPanel from "@/components/QuizStatsPanel";
+import { recordTrainerSelfGrade } from "@/lib/quizStats";
 
 type Question = {
   id: number;
@@ -43,6 +46,8 @@ export default function Home() {
   const [topics, setTopics] = useState<string[]>([]);
   const [topicsLoaded, setTopicsLoaded] = useState(false);
   const [topicFilter, setTopicFilter] = useState<string>(ALL_TOPICS_VALUE);
+  /** Самооценка по текущей карточке после просмотра ответа */
+  const [trainerGrade, setTrainerGrade] = useState<"know" | "miss" | null>(null);
 
   useEffect(() => {
     let cancelled = false;
@@ -64,6 +69,18 @@ export default function Home() {
     return () => {
       cancelled = true;
     };
+  }, []);
+
+  useEffect(() => {
+    setTrainerGrade(null);
+  }, [current?.id]);
+
+  const applyTopic = useCallback((t: string) => {
+    setTopicFilter(t);
+    setCurrent(null);
+    setShowHint(false);
+    setShowAnswer(false);
+    setMessage("");
   }, []);
 
   const getRandomQuestion = useCallback(async () => {
@@ -92,7 +109,7 @@ export default function Home() {
       <Stack spacing={3}>
         <SiteHeader
           title="Тренажёр вопросов"
-          subtitle="Выберите тему или тренируйтесь по всей базе. Новые карточки — на странице «Новая карточка»."
+          subtitle="Тема — кнопками или списком; можно тренироваться по всей базе. Новые карточки — на странице «Новая карточка»."
         />
 
         {message ? (
@@ -100,6 +117,8 @@ export default function Home() {
             {message}
           </Alert>
         ) : null}
+
+        <QuizStatsPanel />
 
         <Card elevation={0}>
           <CardContent sx={{ p: { xs: 2, sm: 3 } }}>
@@ -110,29 +129,33 @@ export default function Home() {
               Получите карточку из базы и проверьте себя.
             </Typography>
 
-            <FormControl fullWidth sx={{ mb: 2 }} disabled={!topicsLoaded}>
-              <InputLabel id="trainer-topic-label">Тема</InputLabel>
-              <Select
-                labelId="trainer-topic-label"
-                id="trainer-topic"
+            <Stack spacing={2} sx={{ mb: 2 }}>
+              <TopicChipFilter
+                topics={topics}
+                loaded={topicsLoaded}
                 value={topicFilter}
-                label="Тема"
-                onChange={(e) => {
-                  setTopicFilter(e.target.value);
-                  setCurrent(null);
-                  setShowHint(false);
-                  setShowAnswer(false);
-                  setMessage("");
-                }}
-              >
-                <MenuItem value={ALL_TOPICS_VALUE}>Все темы</MenuItem>
-                {topics.map((t) => (
-                  <MenuItem key={t} value={t}>
-                    {t}
-                  </MenuItem>
-                ))}
-              </Select>
-            </FormControl>
+                onTopicChange={applyTopic}
+              />
+              <FormControl fullWidth disabled={!topicsLoaded}>
+                <InputLabel id="trainer-topic-label">Тема</InputLabel>
+                <Select
+                  labelId="trainer-topic-label"
+                  id="trainer-topic"
+                  value={topicFilter}
+                  label="Тема"
+                  onChange={(e) => {
+                    applyTopic(e.target.value);
+                  }}
+                >
+                  <MenuItem value={ALL_TOPICS_VALUE}>Все темы</MenuItem>
+                  {topics.map((t) => (
+                    <MenuItem key={t} value={t}>
+                      {t}
+                    </MenuItem>
+                  ))}
+                </Select>
+              </FormControl>
+            </Stack>
 
             <Button
               fullWidth
@@ -247,33 +270,72 @@ export default function Home() {
                 ) : null}
 
                 <Collapse in={showAnswer}>
-                  <Box
-                    sx={{
-                      p: 2.25,
-                      borderRadius: "6px",
-                      bgcolor: "action.hover",
-                      border: "1px solid",
-                      borderColor: "divider",
-                    }}
-                  >
-                    <Typography
-                      variant="overline"
-                      color="text.secondary"
-                      sx={{ display: "block", mb: 1.25, letterSpacing: "0.08em", fontWeight: 600 }}
-                    >
-                      Ответ
-                    </Typography>
-                    <Typography
+                  <Stack spacing={2}>
+                    <Box
                       sx={{
-                        whiteSpace: "pre-wrap",
-                        fontSize: "1.1875rem",
-                        fontWeight: 400,
-                        lineHeight: 1.75,
+                        p: 2.25,
+                        borderRadius: "6px",
+                        bgcolor: "action.hover",
+                        border: "1px solid",
+                        borderColor: "divider",
                       }}
                     >
-                      {current.answer}
-                    </Typography>
-                  </Box>
+                      <Typography
+                        variant="overline"
+                        color="text.secondary"
+                        sx={{ display: "block", mb: 1.25, letterSpacing: "0.08em", fontWeight: 600 }}
+                      >
+                        Ответ
+                      </Typography>
+                      <Typography
+                        sx={{
+                          whiteSpace: "pre-wrap",
+                          fontSize: "1.1875rem",
+                          fontWeight: 400,
+                          lineHeight: 1.75,
+                        }}
+                      >
+                        {current.answer}
+                      </Typography>
+                    </Box>
+                    {trainerGrade === null ? (
+                      <Box>
+                        <Typography variant="body2" color="text.secondary" sx={{ mb: 1.25, fontWeight: 600 }}>
+                          Оцените себя (учитывается в баллах и статистике):
+                        </Typography>
+                        <Stack direction={{ xs: "column", sm: "row" }} spacing={1.25}>
+                          <Button
+                            variant="contained"
+                            color="primary"
+                            fullWidth
+                            onClick={() => {
+                              recordTrainerSelfGrade(true);
+                              setTrainerGrade("know");
+                            }}
+                          >
+                            Знал ответ (+1 балл)
+                          </Button>
+                          <Button
+                            variant="outlined"
+                            color="inherit"
+                            fullWidth
+                            onClick={() => {
+                              recordTrainerSelfGrade(false);
+                              setTrainerGrade("miss");
+                            }}
+                          >
+                            Не знал
+                          </Button>
+                        </Stack>
+                      </Box>
+                    ) : (
+                      <Typography variant="body2" color="text.secondary">
+                        {trainerGrade === "know"
+                          ? "Записано: верный самоотчёт (+1 балл)."
+                          : "Записано: неверный самоотчёт."}
+                      </Typography>
+                    )}
+                  </Stack>
                 </Collapse>
               </Stack>
             ) : (

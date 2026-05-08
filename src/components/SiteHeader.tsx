@@ -1,5 +1,6 @@
 "use client";
 
+import AddCardRoundedIcon from "@mui/icons-material/AddCardRounded";
 import FactCheckRoundedIcon from "@mui/icons-material/FactCheckRounded";
 import MenuBookRoundedIcon from "@mui/icons-material/MenuBookRounded";
 import QuizRoundedIcon from "@mui/icons-material/QuizRounded";
@@ -40,6 +41,7 @@ export default function SiteHeader({
           variant={pathname === "/" ? "contained" : "outlined"}
           color={pathname === "/" ? "secondary" : "inherit"}
           size="medium"
+          startIcon={<QuizRoundedIcon />}
           sx={{ width: "100%", justifyContent: "center" }}
         >
           Тренировка
@@ -50,6 +52,7 @@ export default function SiteHeader({
           variant={mcqActive ? "contained" : "outlined"}
           color={mcqActive ? "secondary" : "inherit"}
           size="medium"
+          startIcon={<FactCheckRoundedIcon />}
           sx={{ width: "100%", justifyContent: "center" }}
         >
           Тест
@@ -60,6 +63,7 @@ export default function SiteHeader({
           variant={pathname === "/new" ? "contained" : "outlined"}
           color={pathname === "/new" ? "secondary" : "inherit"}
           size="medium"
+          startIcon={<AddCardRoundedIcon />}
           sx={{ width: "100%", justifyContent: "center" }}
         >
           Новая карточка
@@ -70,6 +74,7 @@ export default function SiteHeader({
           variant={theoryActive ? "contained" : "outlined"}
           color={theoryActive ? "secondary" : "inherit"}
           size="medium"
+          startIcon={<MenuBookRoundedIcon />}
           sx={{ width: "100%", justifyContent: "center" }}
         >
           Теория

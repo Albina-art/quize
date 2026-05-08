@@ -2,6 +2,7 @@
 
 import QuizPageShell from "@/components/QuizPageShell";
 import SiteHeader from "@/components/SiteHeader";
+import TopicChipFilter from "@/components/TopicChipFilter";
 import CasinoRoundedIcon from "@mui/icons-material/CasinoRounded";
 import FactCheckRoundedIcon from "@mui/icons-material/FactCheckRounded";
 import LightbulbRoundedIcon from "@mui/icons-material/LightbulbRounded";
@@ -23,7 +24,10 @@ import Select from "@mui/material/Select";
 import Stack from "@mui/material/Stack";
 import Typography from "@mui/material/Typography";
 import { alpha, useTheme } from "@mui/material/styles";
-import { useCallback, useEffect, useState } from "react";
+import { useSearchParams } from "next/navigation";
+import { Suspense, useCallback, useEffect, useState } from "react";
+import QuizStatsPanel from "@/components/QuizStatsPanel";
+import { recordMcqResult } from "@/lib/quizStats";
 
 type McqOption = { id: number; text: string };
 
@@ -37,8 +41,10 @@ type McqPayload = {
 
 const ALL_TOPICS_VALUE = "";
 
-export default function McqPage() {
+function McqPageInner() {
   const theme = useTheme();
+  const searchParams = useSearchParams();
+  const topicParam = searchParams.get("topic");
   const [message, setMessage] = useState("");
   const [messageSeverity, setMessageSeverity] = useState<"success" | "error">(
     "success",
@@ -75,6 +81,34 @@ export default function McqPage() {
     return () => {
       cancelled = true;
     };
+  }, []);
+
+  useEffect(() => {
+    if (!topicsLoaded || topics.length === 0) return;
+    if (!topicParam) return;
+    let decoded = topicParam;
+    try {
+      decoded = decodeURIComponent(topicParam);
+    } catch {
+      return;
+    }
+    const trimmed = decoded.trim();
+    if (!topics.includes(trimmed)) return;
+    setTopicFilter(trimmed);
+    setCurrent(null);
+    setSelectedId("");
+    setShowHint(false);
+    setVerified(null);
+    setMessage("");
+  }, [topicsLoaded, topics, topicParam]);
+
+  const applyTopic = useCallback((t: string) => {
+    setTopicFilter(t);
+    setCurrent(null);
+    setSelectedId("");
+    setShowHint(false);
+    setVerified(null);
+    setMessage("");
   }, []);
 
   const loadQuestion = useCallback(async () => {
@@ -123,8 +157,10 @@ export default function McqPage() {
     }
 
     setMessage("");
+    const correct = Boolean(data.correct);
+    recordMcqResult(correct);
     setVerified({
-      correct: Boolean(data.correct),
+      correct,
       correctOptionId:
         typeof data.correctOptionId === "number" ? data.correctOptionId : null,
     });
@@ -163,39 +199,44 @@ export default function McqPage() {
           </Alert>
         ) : null}
 
+        <QuizStatsPanel />
+
         <Card elevation={0}>
           <CardContent sx={{ p: { xs: 2, sm: 3 } }}>
             <Typography variant="h6" sx={{ mb: 1 }}>
               Вопрос с вариантами
             </Typography>
             <Typography variant="body1" color="text.secondary" sx={{ mb: 2 }}>
-              Случайный вопрос из базы тестов. Тему можно сузить ниже.
+              Случайный вопрос из базы тестов. Тему можно выбрать кнопками или в списке.
             </Typography>
 
-            <FormControl fullWidth sx={{ mb: 2 }} disabled={!topicsLoaded}>
-              <InputLabel id="mcq-topic-label">Тема</InputLabel>
-              <Select
-                labelId="mcq-topic-label"
-                id="mcq-topic"
+            <Stack spacing={2} sx={{ mb: 2 }}>
+              <TopicChipFilter
+                topics={topics}
+                loaded={topicsLoaded}
                 value={topicFilter}
-                label="Тема"
-                onChange={(e) => {
-                  setTopicFilter(e.target.value);
-                  setCurrent(null);
-                  setSelectedId("");
-                  setShowHint(false);
-                  setVerified(null);
-                  setMessage("");
-                }}
-              >
-                <MenuItem value={ALL_TOPICS_VALUE}>Все темы</MenuItem>
-                {topics.map((t) => (
-                  <MenuItem key={t} value={t}>
-                    {t}
-                  </MenuItem>
-                ))}
-              </Select>
-            </FormControl>
+                onTopicChange={applyTopic}
+              />
+              <FormControl fullWidth disabled={!topicsLoaded}>
+                <InputLabel id="mcq-topic-label">Тема</InputLabel>
+                <Select
+                  labelId="mcq-topic-label"
+                  id="mcq-topic"
+                  value={topicFilter}
+                  label="Тема"
+                  onChange={(e) => {
+                    applyTopic(e.target.value);
+                  }}
+                >
+                  <MenuItem value={ALL_TOPICS_VALUE}>Все темы</MenuItem>
+                  {topics.map((t) => (
+                    <MenuItem key={t} value={t}>
+                      {t}
+                    </MenuItem>
+                  ))}
+                </Select>
+              </FormControl>
+            </Stack>
 
             <Stack spacing={1.5} sx={{ mb: 2 }}>
               <Button
@@ -206,7 +247,7 @@ export default function McqPage() {
                 startIcon={<CasinoRoundedIcon />}
                 onClick={loadQuestion}
               >
-                Другой вопрос
+                Вопрос
               </Button>
               <Button
                 fullWidth
@@ -376,12 +417,33 @@ export default function McqPage() {
               </Stack>
             ) : (
               <Typography variant="body1" color="text.secondary">
-                Нажмите «Другой вопрос», чтобы загрузить тест.
+                Нажмите «Вопрос», чтобы загрузить тест.
               </Typography>
             )}
           </CardContent>
         </Card>
       </Stack>
     </QuizPageShell>
+  );
+}
+
+function McqPageFallback() {
+  return (
+    <QuizPageShell>
+      <Stack spacing={3}>
+        <SiteHeader
+          title="Тест: варианты ответов"
+          subtitle="Загрузка страницы теста…"
+        />
+      </Stack>
+    </QuizPageShell>
+  );
+}
+
+export default function McqPage() {
+  return (
+    <Suspense fallback={<McqPageFallback />}>
+      <McqPageInner />
+    </Suspense>
   );
 }

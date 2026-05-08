@@ -2,10 +2,11 @@
 
 import QuizPageShell from "@/components/QuizPageShell";
 import SiteHeader from "@/components/SiteHeader";
-import { theoryTopics } from "@/content/theory/topics";
-import ArrowForwardRoundedIcon from "@mui/icons-material/ArrowForwardRounded";
+import { mcqUrlForTheorySlug, theoryTopics } from "@/content/theory/topics";
+import FactCheckRoundedIcon from "@mui/icons-material/FactCheckRounded";
+import MenuBookRoundedIcon from "@mui/icons-material/MenuBookRounded";
+import Button from "@mui/material/Button";
 import Card from "@mui/material/Card";
-import CardActionArea from "@mui/material/CardActionArea";
 import CardContent from "@mui/material/CardContent";
 import Stack from "@mui/material/Stack";
 import Typography from "@mui/material/Typography";
@@ -21,11 +22,12 @@ export default function TheoryIndexPage() {
         />
 
         <Stack spacing={2}>
-          {theoryTopics.map((topic) => (
-            <Card key={topic.slug} elevation={0}>
-              <CardActionArea component={Link} href={`/theory/${topic.slug}`}>
+          {theoryTopics.map((topic) => {
+            const mcqHref = mcqUrlForTheorySlug(topic.slug);
+            return (
+              <Card key={topic.slug} elevation={0}>
                 <CardContent sx={{ p: { xs: 2, sm: 2.5 } }}>
-                  <Stack spacing={1}>
+                  <Stack spacing={1.75}>
                     <Typography
                       variant="h6"
                       component="h2"
@@ -41,23 +43,40 @@ export default function TheoryIndexPage() {
                       {topic.description}
                     </Typography>
                     <Stack
-                      spacing={0.5}
-                      sx={{
-                        flexDirection: "row",
-                        alignItems: "center",
-                        color: "secondary.main",
-                      }}
+                      direction={{ xs: "column", sm: "row" }}
+                      spacing={1.25}
+                      sx={{ pt: 0.5 }}
                     >
-                      <Typography variant="body2" sx={{ fontWeight: 600 }}>
-                        Читать
-                      </Typography>
-                      <ArrowForwardRoundedIcon sx={{ fontSize: 18 }} />
+                      <Button
+                        component={Link}
+                        href={`/theory/${topic.slug}`}
+                        variant="contained"
+                        color="secondary"
+                        size="medium"
+                        startIcon={<MenuBookRoundedIcon />}
+                        sx={{ justifyContent: "center", textTransform: "none", fontWeight: 600 }}
+                      >
+                        Читать конспект
+                      </Button>
+                      {mcqHref ? (
+                        <Button
+                          component={Link}
+                          href={mcqHref}
+                          variant="outlined"
+                          color="inherit"
+                          size="medium"
+                          startIcon={<FactCheckRoundedIcon />}
+                          sx={{ justifyContent: "center", textTransform: "none", fontWeight: 600 }}
+                        >
+                          Тест по теме
+                        </Button>
+                      ) : null}
                     </Stack>
                   </Stack>
                 </CardContent>
-              </CardActionArea>
-            </Card>
-          ))}
+              </Card>
+            );
+          })}
         </Stack>
       </Stack>
     </QuizPageShell>
