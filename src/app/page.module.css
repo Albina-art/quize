@@ -45,7 +45,7 @@
   line-height: 48px;
   letter-spacing: -2.4px;
   text-wrap: balance;
-  color: var(--text-primary);
+  color: white;
 }
 
 .intro p {
