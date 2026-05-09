@@ -2,12 +2,12 @@
 
 import {
   emptyStats,
-  loadStats,
   totalFail,
   totalScore,
   totalSuccess,
   type QuizStats,
 } from "@/lib/quizStats";
+import { quizFetch } from "@/lib/quizFetch";
 import EmojiEventsRoundedIcon from "@mui/icons-material/EmojiEventsRounded";
 import ThumbDownAltOutlinedIcon from "@mui/icons-material/ThumbDownAltOutlined";
 import ThumbUpAltOutlinedIcon from "@mui/icons-material/ThumbUpAltOutlined";
@@ -21,17 +21,33 @@ export default function QuizStatsPanel() {
   /** Начало с нулей: SSR и первый клиентский проход совпадают; localStorage только в useEffect — без hydration mismatch. */
   const [stats, setStats] = useState<QuizStats>(emptyStats);
 
-  const sync = useCallback(() => {
-    setStats(loadStats());
+  const sync = useCallback(async () => {
+    try {
+      const res = await quizFetch("/api/stats");
+      if (!res.ok) {
+        setStats(emptyStats());
+        return;
+      }
+      const data = (await res.json()) as Partial<QuizStats>;
+      setStats({
+        mcqCorrect: Number(data.mcqCorrect) || 0,
+        mcqWrong: Number(data.mcqWrong) || 0,
+        trainerKnow: Number(data.trainerKnow) || 0,
+        trainerMiss: Number(data.trainerMiss) || 0,
+      });
+    } catch {
+      setStats(emptyStats());
+    }
   }, []);
 
   useEffect(() => {
-    sync();
-    window.addEventListener("quiz-stats-changed", sync);
-    window.addEventListener("storage", sync);
+    void sync();
+    const onEv = () => void sync();
+    window.addEventListener("quiz-stats-changed", onEv);
+    window.addEventListener("storage", onEv);
     return () => {
-      window.removeEventListener("quiz-stats-changed", sync);
-      window.removeEventListener("storage", sync);
+      window.removeEventListener("quiz-stats-changed", onEv);
+      window.removeEventListener("storage", onEv);
     };
   }, [sync]);
 
@@ -115,7 +131,7 @@ export default function QuizStatsPanel() {
         </Box>
       </Box>
       <Typography variant="caption" color="text.secondary" sx={{ display: "block", mt: 1.25, opacity: 0.9 }}>
-        Тест с вариантами и самооценка на карточках (после открытия ответа). Данные в браузере.
+        Тест и самооценка сохраняются в вашей строке браузера (идентификатор устройства), ответы — в общей базе.
       </Typography>
     </Paper>
   );

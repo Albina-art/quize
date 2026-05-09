@@ -20,9 +20,13 @@ export function emptyStats(): QuizStats {
   };
 }
 
-function notifyStatsChanged() {
+export function notifyQuizStatsChanged() {
   if (typeof window === "undefined") return;
   window.dispatchEvent(new CustomEvent("quiz-stats-changed"));
+}
+
+function notifyStatsChanged() {
+  notifyQuizStatsChanged();
 }
 
 export function loadStats(): QuizStats {
@@ -65,20 +69,14 @@ export function totalFail(stats: QuizStats): number {
   return stats.mcqWrong + stats.trainerMiss;
 }
 
-export function recordMcqResult(correct: boolean): QuizStats {
-  const s = loadStats();
-  if (correct) s.mcqCorrect += 1;
-  else s.mcqWrong += 1;
-  saveStats(s);
-  return s;
+/** После сохранения ответа в БД (см. `/api/mcq/verify`) — перезагрузить панель баллов. */
+export function recordMcqResult(): void {
+  notifyQuizStatsChanged();
 }
 
-export function recordTrainerSelfGrade(knew: boolean): QuizStats {
-  const s = loadStats();
-  if (knew) s.trainerKnow += 1;
-  else s.trainerMiss += 1;
-  saveStats(s);
-  return s;
+/** Тренажёр пишет прогресс в `/api/questions/grade`; вызовите после успешного ответа сервера. */
+export function recordTrainerSelfGradeSynced(): void {
+  notifyQuizStatsChanged();
 }
 
 export function resetStats(): void {

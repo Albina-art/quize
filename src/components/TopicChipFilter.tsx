@@ -19,6 +19,8 @@ import type { Theme } from "@mui/material/styles";
 import { alpha, keyframes } from "@mui/material/styles";
 import type { SvgIconProps } from "@mui/material/SvgIcon";
 import Typography from "@mui/material/Typography";
+import CheckCircleRoundedIcon from "@mui/icons-material/CheckCircleRounded";
+import HighlightOffRoundedIcon from "@mui/icons-material/HighlightOffRounded";
 import type { ComponentType } from "react";
 import { useCallback, useEffect, useRef, useState } from "react";
 
@@ -92,7 +94,44 @@ export type TopicChipFilterProps = {
   value: string;
   onTopicChange: (topic: string) => void;
   allValue?: string;
+  /** Суммы «успешно / неуспешно» по каждой теме (локальный прогресс). */
+  topicProgress?: Record<string, { ok: number; bad: number }>;
+  /** Те же суммы для кнопки «Все темы». */
+  aggregateProgress?: { ok: number; bad: number };
 };
+
+function ProgressMarks({
+  ok,
+  bad,
+  selected,
+}: {
+  ok: number;
+  bad: number;
+  selected: boolean;
+}) {
+  if (ok === 0 && bad === 0) return null;
+  const sub = selected ? "rgba(255,255,255,0.88)" : "text.secondary";
+  return (
+    <Box sx={{ mt: 0.75, display: "flex", alignItems: "center", gap: 1.25, flexWrap: "wrap" }}>
+      {ok > 0 ? (
+        <Box sx={{ display: "flex", alignItems: "center", gap: 0.35 }}>
+          <CheckCircleRoundedIcon sx={{ fontSize: 18, color: "success.light" }} />
+          <Typography component="span" variant="caption" sx={{ fontWeight: 600, color: sub }}>
+            {ok}
+          </Typography>
+        </Box>
+      ) : null}
+      {bad > 0 ? (
+        <Box sx={{ display: "flex", alignItems: "center", gap: 0.35 }}>
+          <HighlightOffRoundedIcon sx={{ fontSize: 18, color: "error.light" }} />
+          <Typography component="span" variant="caption" sx={{ fontWeight: 600, color: sub }}>
+            {bad}
+          </Typography>
+        </Box>
+      ) : null}
+    </Box>
+  );
+}
 
 export default function TopicChipFilter({
   topics,
@@ -100,6 +139,8 @@ export default function TopicChipFilter({
   value,
   onTopicChange,
   allValue = "",
+  topicProgress = {},
+  aggregateProgress,
 }: TopicChipFilterProps) {
   const isAll = value === allValue;
   const scrollRef = useRef<HTMLDivElement>(null);
@@ -199,6 +240,9 @@ export default function TopicChipFilter({
   const topicSlide = (t: string) => {
     const selected = value === t;
     const { title, description, icon } = topicButtonCopy(t);
+    const marks = topicProgress[t];
+    const ok = marks?.ok ?? 0;
+    const bad = marks?.bad ?? 0;
     return (
       <Button
         key={t}
@@ -243,6 +287,7 @@ export default function TopicChipFilter({
             >
               {description}
             </Typography>
+            <ProgressMarks ok={ok} bad={bad} selected={selected} />
           </Box>
         </Box>
       </Button>
@@ -361,6 +406,13 @@ export default function TopicChipFilter({
                 >
                   {ALL_TOPICS_BUTTON_COPY.description}
                 </Typography>
+                {aggregateProgress ? (
+                  <ProgressMarks
+                    ok={aggregateProgress.ok}
+                    bad={aggregateProgress.bad}
+                    selected={isAll}
+                  />
+                ) : null}
               </Box>
             </Box>
           </Button>

@@ -19,6 +19,8 @@ model Question {
   hint      String?
   answer    String
   createdAt DateTime @default(now())
+
+  trainerProgress TrainerQuestionProgress[]
 }
 
 model McqQuestion {
@@ -28,6 +30,40 @@ model McqQuestion {
   hint      String?
   createdAt DateTime    @default(now())
   options   McqOption[]
+  progress  McqQuestionProgress[]
+}
+
+model MarkdownNote {
+  id        String   @id @default(uuid())
+  deviceId  String   @db.VarChar(128)
+  title     String   @default("")
+  body      String   @default("")
+  createdAt DateTime @default(now())
+  updatedAt DateTime @updatedAt
+
+  @@index([deviceId, updatedAt(sort: Desc)])
+}
+
+model McqQuestionProgress {
+  id          Int         @id @default(autoincrement())
+  deviceId    String      @db.VarChar(128)
+  questionId  Int
+  lastCorrect Boolean
+  updatedAt   DateTime    @updatedAt
+  question    McqQuestion @relation(fields: [questionId], references: [id], onDelete: Cascade)
+
+  @@unique([deviceId, questionId])
+}
+
+model TrainerQuestionProgress {
+  id             Int      @id @default(autoincrement())
+  deviceId       String   @db.VarChar(128)
+  questionId     Int
+  knewAnswer     Boolean
+  updatedAt      DateTime @updatedAt
+  question       Question @relation(fields: [questionId], references: [id], onDelete: Cascade)
+
+  @@unique([deviceId, questionId])
 }
 
 model McqOption {

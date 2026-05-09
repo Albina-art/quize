@@ -1,6 +1,7 @@
 "use client";
 
 import AddCardRoundedIcon from "@mui/icons-material/AddCardRounded";
+import EditNoteRoundedIcon from "@mui/icons-material/EditNoteRounded";
 import FactCheckRoundedIcon from "@mui/icons-material/FactCheckRounded";
 import MenuBookRoundedIcon from "@mui/icons-material/MenuBookRounded";
 import QuizRoundedIcon from "@mui/icons-material/QuizRounded";
@@ -22,13 +23,18 @@ export default function SiteHeader({
   const pathname = usePathname();
   const theoryActive = pathname.startsWith("/theory");
   const mcqActive = pathname === "/mcq";
+  const notesActive = pathname === "/notes";
 
   return (
     <Stack spacing={2}>
       <Box
         sx={{
           display: "grid",
-          gridTemplateColumns: { xs: "repeat(2, 1fr)", sm: "repeat(4, 1fr)" },
+          gridTemplateColumns: {
+            xs: "repeat(2, 1fr)",
+            sm: "repeat(3, 1fr)",
+            md: "repeat(5, 1fr)",
+          },
           gap: 1,
           width: "100%",
           maxWidth: 960,
@@ -66,7 +72,7 @@ export default function SiteHeader({
           startIcon={<AddCardRoundedIcon />}
           sx={{ width: "100%", justifyContent: "center" }}
         >
-          Новая карточка
+          Новый
         </Button>
         <Button
           component={Link}
@@ -79,6 +85,17 @@ export default function SiteHeader({
         >
           Теория
         </Button>
+        <Button
+          component={Link}
+          href="/notes"
+          variant={notesActive ? "contained" : "outlined"}
+          color={notesActive ? "secondary" : "inherit"}
+          size="medium"
+          startIcon={<EditNoteRoundedIcon />}
+          sx={{ width: "100%", justifyContent: "center" }}
+        >
+          Заметки
+        </Button>
       </Box>
 
       <Stack spacing={1} sx={{ alignItems: "flex-start" }}>
@@ -88,6 +105,8 @@ export default function SiteHeader({
               <MenuBookRoundedIcon />
             ) : mcqActive ? (
               <FactCheckRoundedIcon />
+            ) : notesActive ? (
+              <EditNoteRoundedIcon />
             ) : (
               <QuizRoundedIcon />
             )
@@ -97,7 +116,9 @@ export default function SiteHeader({
               ? "Теория · конспекты"
               : mcqActive
                 ? "Тест · варианты ответов"
-                : "PostgreSQL · случайная выдача"
+                : notesActive
+                  ? "Заметки · Markdown"
+                  : "PostgreSQL · случайная выдача"
           }
           color="secondary"
           variant="outlined"
