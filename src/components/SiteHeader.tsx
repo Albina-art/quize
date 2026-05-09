@@ -113,7 +113,7 @@ export default function SiteHeader({
               lineHeight: 1.25,
             }),
             background: (t) =>
-              `linear-gradient(120deg, ${t.palette.secondary.light}, ${t.palette.secondary.main})`,
+              `linear-gradient(120deg, ${t.palette.secondary.light}, white)`,
             backgroundClip: "text",
             WebkitTextFillColor: "transparent",
           }}

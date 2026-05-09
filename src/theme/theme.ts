@@ -10,7 +10,7 @@ const gh = {
   fgDefault: "#f0f4f8",
   fgMuted: "#a8b5c4",
   /** Акцент secondary (кнопки, chip, градиент заголовка) */
-  accentBlue: "#0769cb",
+  accentBlue: "#f0f8ff",
   accentBlueLight: "#3d95f5",
   accentBlueDark: "#014a9c",
   accentGreen: "#238636",

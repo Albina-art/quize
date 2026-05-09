@@ -74,7 +74,7 @@ function TopicSlideIcon({
           "transform 0.32s cubic-bezier(0.34, 1.3, 0.64, 1), background-color 0.28s ease, box-shadow 0.28s ease",
         bgcolor: selected
           ? alpha("#ffffff", 0.22)
-          : (t) => alpha(t.palette.secondary.main, 0.22),
+          : (t) => alpha(t.palette.secondary.main, 1),
         color: selected ? "common.white" : "secondary.light",
         boxShadow: selected
           ? `inset 0 0 0 1px ${alpha("#fff", 0.2)}`
@@ -161,7 +161,7 @@ export default function TopicChipFilter({
     ...(selected
       ? {
         background: (t: Theme) =>
-          `linear-gradient(155deg, ${t.palette.secondary.dark} 0%, ${t.palette.secondary.main} 48%, ${alpha(t.palette.secondary.light, 0.92)} 110%)`,
+          `linear-gradient(155deg, ${t.palette.secondary.dark} 0%, black 48%, ${alpha(t.palette.secondary.light, 0.92)} 110%)`,
         borderColor: alpha("#3d95f5", 0.85),
         color: "common.white",
         filter: "saturate(1.08)",
