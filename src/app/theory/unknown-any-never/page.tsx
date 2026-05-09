@@ -4,9 +4,9 @@ import TheoryTopicBanner from "@/components/TheoryTopicBanner";
 import TheoryCollapsibleSections from "@/components/TheoryCollapsibleSections";
 import TheoryNavLink from "@/components/TheoryNavLink";
 import {
-  httpsTlsTheoryIntro,
-  httpsTlsTheorySections,
-} from "@/content/theory/httpsTlsTheorySections";
+  unknownAnyNeverTheoryIntro,
+  unknownAnyNeverTheorySections,
+} from "@/content/theory/unknownAnyNeverTheorySections";
 import { mcqUrlForTheorySlug } from "@/content/theory/topics";
 import Card from "@mui/material/Card";
 import CardContent from "@mui/material/CardContent";
@@ -15,23 +15,23 @@ import Typography from "@mui/material/Typography";
 import type { Metadata } from "next";
 
 export const metadata: Metadata = {
-  title: "HTTPS, SSL и TLS — Теория — Quiz",
+  title: "unknown, any и never — Теория — Quiz",
   description:
-    "TLS Handshake, симметричное и асимметричное шифрование, цели HTTPS",
+    "Разница между any, unknown и never в TypeScript: безопасность, сужение типов и исчерпывающие проверки",
 };
 
-const mcqTestHref = mcqUrlForTheorySlug("https-tls");
+const mcqTestHref = mcqUrlForTheorySlug("unknown-any-never");
 
-export default function HttpsTlsTheoryPage() {
+export default function UnknownAnyNeverTheoryPage() {
   return (
     <QuizPageShell maxWidth="xl">
       <Stack spacing={3}>
         <SiteHeader
-          title="HTTPS, SSL и TLS"
-          subtitle="Безопасное соединение в вебе: шифрование, сертификаты и рукопожатие."
+          title="unknown, any и never"
+          subtitle="Три специальных типа TypeScript: когда ослабить проверки, когда заставить их проходить и когда описать «пустоту»."
         />
 
-        <TheoryTopicBanner slug="https-tls" />
+        <TheoryTopicBanner slug="unknown-any-never" />
 
         {mcqTestHref ? (
           <Typography variant="body1">
@@ -48,8 +48,8 @@ export default function HttpsTlsTheoryPage() {
         <Card elevation={0}>
           <CardContent sx={{ p: { xs: 1.25, sm: 2 } }}>
             <TheoryCollapsibleSections
-              introMarkdown={httpsTlsTheoryIntro}
-              sections={httpsTlsTheorySections}
+              introMarkdown={unknownAnyNeverTheoryIntro}
+              sections={unknownAnyNeverTheorySections}
             />
           </CardContent>
         </Card>

@@ -1,8 +1,12 @@
-import MarkdownArticle from "@/components/MarkdownArticle";
 import QuizPageShell from "@/components/QuizPageShell";
 import SiteHeader from "@/components/SiteHeader";
+import TheoryTopicBanner from "@/components/TheoryTopicBanner";
+import TheoryCollapsibleSections from "@/components/TheoryCollapsibleSections";
 import TheoryNavLink from "@/components/TheoryNavLink";
-import { urlBrowserMarkdown } from "@/content/theory/urlBrowserMarkdown";
+import {
+  urlBrowserTheoryIntro,
+  urlBrowserTheorySections,
+} from "@/content/theory/urlBrowserTheorySections";
 import { mcqUrlForTheorySlug } from "@/content/theory/topics";
 import Card from "@mui/material/Card";
 import CardContent from "@mui/material/CardContent";
@@ -25,6 +29,8 @@ export default function UrlBrowserTheoryPage() {
           title="Что происходит при вводе URL"
           subtitle="От DNS и TCP до HTTPS, веб-сервера и отрисовки страницы."
         />
+
+        <TheoryTopicBanner slug="url-browser" />
 
         <Stack spacing={1.25}>
           <Typography variant="body1">
@@ -51,7 +57,10 @@ export default function UrlBrowserTheoryPage() {
 
         <Card elevation={0}>
           <CardContent sx={{ p: { xs: 1.25, sm: 2 } }}>
-            <MarkdownArticle source={urlBrowserMarkdown} />
+            <TheoryCollapsibleSections
+              introMarkdown={urlBrowserTheoryIntro}
+              sections={urlBrowserTheorySections}
+            />
           </CardContent>
         </Card>
       </Stack>

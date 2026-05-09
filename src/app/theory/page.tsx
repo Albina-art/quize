@@ -2,8 +2,13 @@
 
 import QuizPageShell from "@/components/QuizPageShell";
 import SiteHeader from "@/components/SiteHeader";
-import { mcqUrlForTheorySlug, theoryTopics } from "@/content/theory/topics";
+import {
+  mcqUrlForTheorySlug,
+  theoryTopics,
+  trainerUrlForTheorySlug,
+} from "@/content/theory/topics";
 import FactCheckRoundedIcon from "@mui/icons-material/FactCheckRounded";
+import FitnessCenterRoundedIcon from "@mui/icons-material/FitnessCenterRounded";
 import MenuBookRoundedIcon from "@mui/icons-material/MenuBookRounded";
 import Box from "@mui/material/Box";
 import Button from "@mui/material/Button";
@@ -25,6 +30,7 @@ export default function TheoryIndexPage() {
         <Stack spacing={2}>
           {theoryTopics.map((topic) => {
             const mcqHref = mcqUrlForTheorySlug(topic.slug);
+            const trainerHref = trainerUrlForTheorySlug(topic.slug);
             return (
               <Card
                 key={topic.slug}
@@ -144,6 +150,19 @@ export default function TheoryIndexPage() {
                   >
                     Читать конспект
                   </Button>
+                  {trainerHref ? (
+                    <Button
+                      component={Link}
+                      href={trainerHref}
+                      variant="outlined"
+                      color="inherit"
+                      size="medium"
+                      startIcon={<FitnessCenterRoundedIcon />}
+                      sx={{ justifyContent: "center", textTransform: "none", fontWeight: 600 }}
+                    >
+                      Тренировка по теме
+                    </Button>
+                  ) : null}
                   {mcqHref ? (
                     <Button
                       component={Link}

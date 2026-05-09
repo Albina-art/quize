@@ -3,10 +3,7 @@ import SiteHeader from "@/components/SiteHeader";
 import TheoryTopicBanner from "@/components/TheoryTopicBanner";
 import TheoryCollapsibleSections from "@/components/TheoryCollapsibleSections";
 import TheoryNavLink from "@/components/TheoryNavLink";
-import {
-  httpsTlsTheoryIntro,
-  httpsTlsTheorySections,
-} from "@/content/theory/httpsTlsTheorySections";
+import { websocketTheoryIntro, websocketTheorySections } from "@/content/theory/websocketTheorySections";
 import { mcqUrlForTheorySlug } from "@/content/theory/topics";
 import Card from "@mui/material/Card";
 import CardContent from "@mui/material/CardContent";
@@ -15,23 +12,23 @@ import Typography from "@mui/material/Typography";
 import type { Metadata } from "next";
 
 export const metadata: Metadata = {
-  title: "HTTPS, SSL и TLS — Теория — Quiz",
+  title: "WebSocket — Теория — Quiz",
   description:
-    "TLS Handshake, симметричное и асимметричное шифрование, цели HTTPS",
+    "Handshake, фреймы, отличия от HTTP, применение и пример кода в браузере",
 };
 
-const mcqTestHref = mcqUrlForTheorySlug("https-tls");
+const mcqTestHref = mcqUrlForTheorySlug("websocket");
 
-export default function HttpsTlsTheoryPage() {
+export default function WebSocketTheoryPage() {
   return (
     <QuizPageShell maxWidth="xl">
       <Stack spacing={3}>
         <SiteHeader
-          title="HTTPS, SSL и TLS"
-          subtitle="Безопасное соединение в вебе: шифрование, сертификаты и рукопожатие."
+          title="WebSocket"
+          subtitle="Полнодуплекс поверх TCP: HTTP Upgrade, фреймы и типичные сценарии использования."
         />
 
-        <TheoryTopicBanner slug="https-tls" />
+        <TheoryTopicBanner slug="websocket" />
 
         {mcqTestHref ? (
           <Typography variant="body1">
@@ -48,8 +45,8 @@ export default function HttpsTlsTheoryPage() {
         <Card elevation={0}>
           <CardContent sx={{ p: { xs: 1.25, sm: 2 } }}>
             <TheoryCollapsibleSections
-              introMarkdown={httpsTlsTheoryIntro}
-              sections={httpsTlsTheorySections}
+              introMarkdown={websocketTheoryIntro}
+              sections={websocketTheorySections}
             />
           </CardContent>
         </Card>

@@ -1,8 +1,9 @@
-import MarkdownArticle from "@/components/MarkdownArticle";
 import QuizPageShell from "@/components/QuizPageShell";
 import SiteHeader from "@/components/SiteHeader";
+import TheoryTopicBanner from "@/components/TheoryTopicBanner";
+import TheoryCollapsibleSections from "@/components/TheoryCollapsibleSections";
 import TheoryNavLink from "@/components/TheoryNavLink";
-import { corsMarkdown } from "@/content/theory/corsMarkdown";
+import { corsTheoryIntro, corsTheorySections } from "@/content/theory/corsTheorySections";
 import { mcqUrlForTheorySlug } from "@/content/theory/topics";
 import Card from "@mui/material/Card";
 import CardContent from "@mui/material/CardContent";
@@ -27,6 +28,8 @@ export default function CorsTheoryPage() {
           subtitle="Как браузер разрешает скриптам с одного сайта обращаться к API на другом — и когда запрос блокируется."
         />
 
+        <TheoryTopicBanner slug="cors" />
+
         {mcqTestHref ? (
           <Typography variant="body1">
             <TheoryNavLink
@@ -41,7 +44,7 @@ export default function CorsTheoryPage() {
 
         <Card elevation={0}>
           <CardContent sx={{ p: { xs: 1.25, sm: 2 } }}>
-            <MarkdownArticle source={corsMarkdown} />
+            <TheoryCollapsibleSections introMarkdown={corsTheoryIntro} sections={corsTheorySections} />
           </CardContent>
         </Card>
       </Stack>

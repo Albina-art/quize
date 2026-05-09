@@ -13,6 +13,16 @@ import Typography from "@mui/material/Typography";
 import type { Components } from "react-markdown";
 import ReactMarkdown from "react-markdown";
 import remarkGfm from "remark-gfm";
+import remarkSmartypants from "remark-smartypants";
+
+const THEORY_SMARTYPANTS = {
+  backticks: false,
+  dashes: false,
+  ellipses: false,
+  quotes: true,
+  openingQuotes: { double: "«", single: "‘" },
+  closingQuotes: { double: "»", single: "’" },
+} as const;
 
 /** Основной текст как у блока «Ответ» на тренировке (page.tsx) */
 const answerBody = {
@@ -85,8 +95,9 @@ const components: Components = {
       {children}
     </Typography>
   ),
+  /** `div`: в Markdown картинки часто попадают в «параграф»; наш `img`-рендер использует `<figure>`, недопустимый внутри `<p>` (SSR/гидратация). */
   p: ({ children }) => (
-    <Typography component="p" sx={{ mb: 2, ...read.body }}>
+    <Typography component="div" role="paragraph" sx={{ mb: 2, ...read.body }}>
       {children}
     </Typography>
   ),
@@ -148,28 +159,50 @@ const components: Components = {
       </Box>
     );
   },
+  /** Fenced ```…```: один блок с фоном; весь текст (кавычки, URL) — как есть, без обрезки. */
   pre: ({ children }) => (
     <Paper
+      component="div"
       variant="outlined"
       sx={{
-        p: 2.25,
         mb: 2.5,
         overflow: "auto",
+        maxWidth: "100%",
         borderRadius: "6px",
-        bgcolor: "action.hover",
-        fontFamily: "ui-monospace, monospace",
-        fontSize: "1.0625rem",
-        lineHeight: 1.65,
+        bgcolor: (t) => (t.palette.mode === "dark" ? "rgba(177, 186, 196, 0.14)" : "action.hover"),
+        borderColor: "divider",
+        p: 2.25,
       }}
     >
-      <Box component="pre" sx={{ m: 0, whiteSpace: "pre-wrap" }}>
-        {children}
-      </Box>
+      {children}
     </Paper>
   ),
   code: ({ className, children }) => {
-    if (className?.startsWith("language-")) {
-      return <code className={className}>{children}</code>;
+    const isFenced = Boolean(className?.startsWith("language-"));
+    if (isFenced) {
+      return (
+        <Box
+          component="code"
+          className={className}
+          sx={{
+            display: "block",
+            m: 0,
+            p: 0,
+            width: "100%",
+            boxSizing: "border-box",
+            whiteSpace: "pre-wrap",
+            overflowWrap: "anywhere",
+            wordBreak: "break-word",
+            fontFamily: "ui-monospace, SFMono-Regular, Menlo, Monaco, Consolas, monospace",
+            fontSize: "1.0625rem",
+            lineHeight: 1.65,
+            color: "text.primary",
+            bgcolor: "transparent",
+          }}
+        >
+          {children}
+        </Box>
+      );
     }
     return (
       <Box
@@ -179,8 +212,11 @@ const components: Components = {
           py: 0.35,
           borderRadius: "4px",
           bgcolor: "action.hover",
-          fontFamily: "ui-monospace, monospace",
+          fontFamily: "ui-monospace, SFMono-Regular, Menlo, Monaco, Consolas, monospace",
           fontSize: "0.95em",
+          whiteSpace: "pre-wrap",
+          overflowWrap: "anywhere",
+          wordBreak: "break-word",
         }}
       >
         {children}
@@ -279,24 +315,51 @@ const listHierarchySx = {
   },
 } as const;
 
-export default function MarkdownArticle({ source }: Readonly<{ source: string }>) {
+export default function MarkdownArticle({
+  source,
+  typographicQuotes = false,
+  embedded = false,
+}: Readonly<{
+  source: string;
+  /** Только для конспектов теории (`/theory/…`): русские «ёлочки» вместо прямых кавычек в тексте. */
+  typographicQuotes?: boolean;
+  /** Внутри аккордеона: без отдельной «карточки», только типографика. */
+  embedded?: boolean;
+}>) {
   return (
     <Box
       sx={{
         maxWidth: "100%",
-        p: 2.25,
-        borderRadius: "6px",
-        bgcolor: "action.hover",
-        border: "1px solid",
-        borderColor: "divider",
+        ...(embedded ?
+          {
+            p: 0,
+            bgcolor: "transparent",
+            border: "none",
+          }
+        : {
+            p: 2.25,
+            borderRadius: "6px",
+            bgcolor: "action.hover",
+            border: "1px solid",
+            borderColor: "divider",
+          }),
         color: "text.primary",
         "& strong": { fontWeight: 600, color: "text.primary" },
         ...listHierarchySx,
       }}
     >
-      <ReactMarkdown remarkPlugins={[remarkGfm]} components={components}>
-        {source}
-      </ReactMarkdown>
+      {typographicQuotes ? (
+        <ReactMarkdown
+          remarkPlugins={[remarkGfm, [remarkSmartypants, THEORY_SMARTYPANTS]]}
+          components={components}
+        >
+          {source}
+        </ReactMarkdown>
+      ) : (
+        <ReactMarkdown remarkPlugins={[remarkGfm]} components={components}>
+          {source}
+        </ReactMarkdown>
+      )}
     </Box>
   );
 }

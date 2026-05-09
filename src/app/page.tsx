@@ -141,6 +141,18 @@ export default function Home() {
     setMessage("");
   }, []);
 
+  const appliedTopicFromUrlRef = useRef(false);
+
+  useEffect(() => {
+    if (!topicsLoaded || appliedTopicFromUrlRef.current) return;
+    const params = new URLSearchParams(window.location.search);
+    const t = params.get("topic");
+    if (t && topics.includes(t)) {
+      appliedTopicFromUrlRef.current = true;
+      applyTopic(t);
+    }
+  }, [topicsLoaded, topics, applyTopic]);
+
   const closeQuestionModal = useCallback(() => {
     questionLoadAbortRef.current?.abort();
     questionLoadAbortRef.current = null;

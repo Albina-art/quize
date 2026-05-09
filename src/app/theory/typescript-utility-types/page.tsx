@@ -1,12 +1,12 @@
 import QuizPageShell from "@/components/QuizPageShell";
 import SiteHeader from "@/components/SiteHeader";
-import TheoryTopicBanner from "@/components/TheoryTopicBanner";
 import TheoryCollapsibleSections from "@/components/TheoryCollapsibleSections";
 import TheoryNavLink from "@/components/TheoryNavLink";
+import TheoryTopicBanner from "@/components/TheoryTopicBanner";
 import {
-  httpsTlsTheoryIntro,
-  httpsTlsTheorySections,
-} from "@/content/theory/httpsTlsTheorySections";
+  utilityTypesTheoryIntro,
+  utilityTypesTheorySections,
+} from "@/content/theory/utilityTypesTheorySections";
 import { mcqUrlForTheorySlug } from "@/content/theory/topics";
 import Card from "@mui/material/Card";
 import CardContent from "@mui/material/CardContent";
@@ -15,23 +15,23 @@ import Typography from "@mui/material/Typography";
 import type { Metadata } from "next";
 
 export const metadata: Metadata = {
-  title: "HTTPS, SSL и TLS — Теория — Quiz",
+  title: "Утилитарные типы TypeScript — Теория — Quiz",
   description:
-    "TLS Handshake, симметричное и асимметричное шифрование, цели HTTPS",
+    "Partial, Required, Pick, Omit, Record, Exclude, Extract, NonNullable, ReturnType, Parameters",
 };
 
-const mcqTestHref = mcqUrlForTheorySlug("https-tls");
+const mcqTestHref = mcqUrlForTheorySlug("typescript-utility-types");
 
-export default function HttpsTlsTheoryPage() {
+export default function TypeScriptUtilityTypesTheoryPage() {
   return (
     <QuizPageShell maxWidth="xl">
       <Stack spacing={3}>
         <SiteHeader
-          title="HTTPS, SSL и TLS"
-          subtitle="Безопасное соединение в вебе: шифрование, сертификаты и рукопожатие."
+          title="Утилитарные типы TypeScript"
+          subtitle="Встроенные преобразования типов: объекты, union и сигнатуры функций без ручного копирования полей."
         />
 
-        <TheoryTopicBanner slug="https-tls" />
+        <TheoryTopicBanner slug="typescript-utility-types" />
 
         {mcqTestHref ? (
           <Typography variant="body1">
@@ -48,8 +48,8 @@ export default function HttpsTlsTheoryPage() {
         <Card elevation={0}>
           <CardContent sx={{ p: { xs: 1.25, sm: 2 } }}>
             <TheoryCollapsibleSections
-              introMarkdown={httpsTlsTheoryIntro}
-              sections={httpsTlsTheorySections}
+              introMarkdown={utilityTypesTheoryIntro}
+              sections={utilityTypesTheorySections}
             />
           </CardContent>
         </Card>
