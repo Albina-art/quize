@@ -73,18 +73,18 @@ export function createAppTheme() {
         lineHeight: 1.5,
       },
       body1: {
-        fontSize: "1.125rem",
+        fontSize: "1.5rem",
         lineHeight: 1.68,
       },
       body2: {
-        fontSize: "1rem",
+        fontSize: "1.0625rem",
         lineHeight: 1.6,
       },
       caption: {
-        fontSize: "0.875rem",
+        fontSize: "0.9375rem",
       },
       button: {
-        fontSize: "1.0625rem",
+        fontSize: "1.125rem",
         fontWeight: 600,
       },
     },
@@ -145,28 +145,28 @@ export function createAppTheme() {
             },
           },
           input: {
-            fontSize: "1.125rem",
+            fontSize: "1.1875rem",
           },
         },
       },
       MuiInputLabel: {
         styleOverrides: {
           root: {
-            fontSize: "1.0625rem",
+            fontSize: "1.125rem",
           },
         },
       },
       MuiChip: {
         styleOverrides: {
           root: {
-            fontSize: "1rem",
+            fontSize: "1.0625rem",
           },
         },
       },
       MuiAlert: {
         styleOverrides: {
           message: {
-            fontSize: "1.0625rem",
+            fontSize: "1.1875rem",
           },
         },
       },

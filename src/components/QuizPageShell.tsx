@@ -9,7 +9,7 @@ export default function QuizPageShell({
   maxWidth = "lg",
 }: Readonly<{
   children: ReactNode;
-  maxWidth?: "sm" | "md" | "lg";
+  maxWidth?: "sm" | "md" | "lg" | "xl";
 }>) {
   return (
     <Box

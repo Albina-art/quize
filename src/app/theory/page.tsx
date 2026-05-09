@@ -14,7 +14,7 @@ import Link from "next/link";
 
 export default function TheoryIndexPage() {
   return (
-    <QuizPageShell>
+    <QuizPageShell maxWidth="xl">
       <Stack spacing={3}>
         <SiteHeader
           title="Теория"

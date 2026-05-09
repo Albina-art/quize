@@ -16,7 +16,7 @@ export const metadata: Metadata = {
 
 export default function UrlBrowserOrderPage() {
   return (
-    <QuizPageShell maxWidth="md">
+    <QuizPageShell>
       <Stack spacing={3}>
         <SiteHeader
           title="Порядок шагов при вводе URL"

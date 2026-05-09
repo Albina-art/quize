@@ -19,7 +19,7 @@ const mcqTestHref = mcqUrlForTheorySlug("url-browser");
 
 export default function UrlBrowserTheoryPage() {
   return (
-    <QuizPageShell maxWidth="lg">
+    <QuizPageShell>
       <Stack spacing={3}>
         <SiteHeader
           title="Что происходит при вводе URL"

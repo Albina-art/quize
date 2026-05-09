@@ -20,7 +20,7 @@ const mcqTestHref = mcqUrlForTheorySlug("https-tls");
 
 export default function HttpsTlsTheoryPage() {
   return (
-    <QuizPageShell maxWidth="lg">
+    <QuizPageShell maxWidth="xl">
       <Stack spacing={3}>
         <SiteHeader
           title="HTTPS, SSL и TLS"

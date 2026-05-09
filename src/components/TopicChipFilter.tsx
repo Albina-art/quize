@@ -225,7 +225,7 @@ export default function TopicChipFilter({
                 fontWeight: 800,
                 letterSpacing: "-0.02em",
                 lineHeight: 1.28,
-                fontSize: "1.0625rem",
+                fontSize: "1.125rem",
                 color: selected ? "common.white" : "text.primary",
               }}
             >
@@ -236,7 +236,7 @@ export default function TopicChipFilter({
               sx={{
                 mt: 0.75,
                 lineHeight: 1.5,
-                fontSize: "0.96875rem",
+                fontSize: "1.0625rem",
                 fontWeight: 450,
                 color: selected ? "rgba(255,255,255,0.92)" : "text.secondary",
               }}
@@ -354,7 +354,7 @@ export default function TopicChipFilter({
                   sx={{
                     mt: 0.75,
                     lineHeight: 1.5,
-                    fontSize: "0.96875rem",
+                    fontSize: "1.0625rem" ,
                     fontWeight: 450,
                     color: isAll ? "rgba(255,255,255,0.92)" : "text.secondary",
                   }}
