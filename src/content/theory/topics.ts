@@ -2,6 +2,8 @@ export type TheoryTopic = {
   slug: string;
   title: string;
   description: string;
+  /** Превью на /theory (файл из public/). */
+  illustration?: string;
   /** Совпадает с полем `topic` у вопросов MCQ в БД — для ссылки «Тест по теме». */
   mcqTopic?: string;
 };
@@ -12,6 +14,7 @@ export const theoryTopics: TheoryTopic[] = [
     title: "Что происходит, когда вы вбиваете URL в браузере?",
     description:
       "DNS, TCP-рукопожатие, HTTP и HTTPS, разбор URL, работа веб-сервера и отрисовка страницы.",
+    illustration: "/theory/url-browser-cover.png",
     mcqTopic: "Браузер: от URL до экрана",
   },
   {
@@ -19,7 +22,16 @@ export const theoryTopics: TheoryTopic[] = [
     title: "HTTPS, SSL и TLS",
     description:
       "Что такое TLS и SSL, конфиденциальность и целостность, симметричное и асимметричное шифрование, этапы TLS Handshake.",
+    illustration: "/theory/https-tls-cover.png",
     mcqTopic: "HTTPS / TCP / TLS",
+  },
+  {
+    slug: "cors",
+    title: "CORS",
+    description:
+      "Same-origin policy, простые и preflight-запросы, заголовки ответа, куки и credentials, типичные ошибки и прокси.",
+    illustration: "/theory/cors-cover.png",
+    mcqTopic: "CORS",
   },
 ];
 

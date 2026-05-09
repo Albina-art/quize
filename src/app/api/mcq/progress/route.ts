@@ -1,22 +1,16 @@
 import { NextResponse } from "next/server";
-import { getQuizDeviceId } from "@/lib/quizDeviceServer";
+import { requireUser } from "@/lib/auth/requireUser";
 import { prisma } from "@/lib/prisma";
 
-/** Прогресс по тестам с вариантами ответов. */
 export async function GET(request: Request) {
+  const auth = await requireUser(request);
+  if (!auth.ok) return auth.response;
   try {
-    const deviceId = getQuizDeviceId(request);
-    if (!deviceId) {
-      return NextResponse.json(
-        { error: "Нужен заголовок X-Quiz-Device-Id." },
-        { status: 400 },
-      );
-    }
-
+    const uid = auth.userId;
     const [questions, progress] = await Promise.all([
       prisma.mcqQuestion.findMany({ select: { id: true, topic: true } }),
       prisma.mcqQuestionProgress.findMany({
-        where: { deviceId },
+        where: { userId: uid },
         select: { questionId: true, lastCorrect: true },
       }),
     ]);

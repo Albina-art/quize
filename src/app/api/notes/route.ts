@@ -1,20 +1,14 @@
 import { NextResponse } from "next/server";
-import { getQuizDeviceId } from "@/lib/quizDeviceServer";
 import { prismaClientErrorMessage } from "@/lib/prismaHttpError";
+import { requireUser } from "@/lib/auth/requireUser";
 import { prisma } from "@/lib/prisma";
 
 export async function GET(request: Request) {
+  const auth = await requireUser(request);
+  if (!auth.ok) return auth.response;
   try {
-    const deviceId = getQuizDeviceId(request);
-    if (!deviceId) {
-      return NextResponse.json(
-        { error: "Нужен заголовок X-Quiz-Device-Id." },
-        { status: 400 },
-      );
-    }
-
     const notes = await prisma.markdownNote.findMany({
-      where: { deviceId },
+      where: { userId: auth.userId },
       orderBy: { updatedAt: "desc" },
     });
 
@@ -29,15 +23,9 @@ export async function GET(request: Request) {
 }
 
 export async function POST(request: Request) {
+  const auth = await requireUser(request);
+  if (!auth.ok) return auth.response;
   try {
-    const deviceId = getQuizDeviceId(request);
-    if (!deviceId) {
-      return NextResponse.json(
-        { error: "Нужен заголовок X-Quiz-Device-Id." },
-        { status: 400 },
-      );
-    }
-
     const body = (await request.json()) as {
       title?: unknown;
       body?: unknown;
@@ -46,7 +34,7 @@ export async function POST(request: Request) {
     const text = String(body?.body ?? "");
 
     const created = await prisma.markdownNote.create({
-      data: { deviceId, title, body: text },
+      data: { userId: auth.userId, title, body: text },
     });
 
     return NextResponse.json(created, { status: 201 });

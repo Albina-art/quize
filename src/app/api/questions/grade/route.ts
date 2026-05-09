@@ -1,18 +1,11 @@
 import { NextResponse } from "next/server";
-import { getQuizDeviceId } from "@/lib/quizDeviceServer";
+import { requireUser } from "@/lib/auth/requireUser";
 import { prisma } from "@/lib/prisma";
 
-/** Сохранить самооценку по карточке («знал» / «не знал»). */
 export async function POST(request: Request) {
+  const auth = await requireUser(request);
+  if (!auth.ok) return auth.response;
   try {
-    const deviceId = getQuizDeviceId(request);
-    if (!deviceId) {
-      return NextResponse.json(
-        { error: "Нужен заголовок X-Quiz-Device-Id." },
-        { status: 400 },
-      );
-    }
-
     const body = (await request.json()) as {
       questionId?: unknown;
       knew?: unknown;
@@ -34,9 +27,9 @@ export async function POST(request: Request) {
 
     await prisma.trainerQuestionProgress.upsert({
       where: {
-        deviceId_questionId: { deviceId, questionId },
+        userId_questionId: { userId: auth.userId, questionId },
       },
-      create: { deviceId, questionId, knewAnswer: knew },
+      create: { userId: auth.userId, questionId, knewAnswer: knew },
       update: { knewAnswer: knew },
     });
 

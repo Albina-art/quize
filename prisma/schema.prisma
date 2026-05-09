@@ -12,6 +12,18 @@ datasource db {
   url      = env("DATABASE_URL")
 }
 
+model User {
+  id           String   @id @default(uuid())
+  email        String   @unique @db.VarChar(320)
+  passwordHash String   @db.VarChar(255)
+  createdAt    DateTime @default(now())
+  updatedAt    DateTime @updatedAt
+
+  notes           MarkdownNote[]
+  mcqProgress     McqQuestionProgress[]
+  trainerProgress TrainerQuestionProgress[]
+}
+
 model Question {
   id        Int      @id @default(autoincrement())
   topic     String
@@ -35,35 +47,38 @@ model McqQuestion {
 
 model MarkdownNote {
   id        String   @id @default(uuid())
-  deviceId  String   @db.VarChar(128)
+  userId    String
+  user      User     @relation(fields: [userId], references: [id], onDelete: Cascade)
   title     String   @default("")
   body      String   @default("")
   createdAt DateTime @default(now())
   updatedAt DateTime @updatedAt
 
-  @@index([deviceId, updatedAt(sort: Desc)])
+  @@index([userId, updatedAt(sort: Desc)])
 }
 
 model McqQuestionProgress {
   id          Int         @id @default(autoincrement())
-  deviceId    String      @db.VarChar(128)
+  userId      String
+  user        User        @relation(fields: [userId], references: [id], onDelete: Cascade)
   questionId  Int
   lastCorrect Boolean
   updatedAt   DateTime    @updatedAt
   question    McqQuestion @relation(fields: [questionId], references: [id], onDelete: Cascade)
 
-  @@unique([deviceId, questionId])
+  @@unique([userId, questionId])
 }
 
 model TrainerQuestionProgress {
-  id             Int      @id @default(autoincrement())
-  deviceId       String   @db.VarChar(128)
-  questionId     Int
-  knewAnswer     Boolean
-  updatedAt      DateTime @updatedAt
-  question       Question @relation(fields: [questionId], references: [id], onDelete: Cascade)
+  id         Int      @id @default(autoincrement())
+  userId     String
+  user       User     @relation(fields: [userId], references: [id], onDelete: Cascade)
+  questionId Int
+  knewAnswer Boolean
+  updatedAt  DateTime @updatedAt
+  question   Question @relation(fields: [questionId], references: [id], onDelete: Cascade)
 
-  @@unique([deviceId, questionId])
+  @@unique([userId, questionId])
 }
 
 model McqOption {

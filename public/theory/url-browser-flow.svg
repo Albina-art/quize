@@ -1,0 +1,31 @@
+<svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 420 420" role="img" aria-labelledby="title2 desc2">
+  <title id="title2">CBL 70?@>A0 >B URL 4> M:@0=0</title>
+  <desc id="desc2">&5?>G:0 MB0?>2: DNS, TCP, TLS, HTTP, A5@25@ 8 >B@8A>2:0 2 1@0C75@5</desc>
+  <rect width="420" height="420" fill="#161d27" rx="8"/>
+  <text x="210" y="32" text-anchor="middle" fill="#f0f4f8" font-size="15" font-family="system-ui,sans-serif" font-weight="600">B 04@5A=>9 AB@>:8 4> AB@0=8FK</text>
+  <defs>
+    <marker id="a2" markerWidth="8" markerHeight="8" refX="4" refY="8" orient="auto">
+      <path d="M0,0 L8,8 L0,16 Z" fill="#79b8ff"/>
+    </marker>
+  </defs>
+  <g font-family="system-ui,sans-serif">
+    <rect x="110" y="56" width="200" height="40" rx="6" fill="#1f2938" stroke="#3fb950" stroke-width="1.5"/>
+    <text x="210" y="82" text-anchor="middle" fill="#f0f4f8" font-size="13" font-weight="600">1 · DNS</text>
+    <text x="210" y="98" text-anchor="middle" fill="#6d7788" font-size="10">4><5= ’ IP</text>
+    <line x1="210" y1="110" x2="210" y2="132" stroke="#79b8ff" stroke-width="2" marker-end="url(#a2)"/>
+    <rect x="110" y="136" width="200" height="40" rx="6" fill="#1f2938" stroke="#3fb950" stroke-width="1.5"/>
+    <text x="210" y="162" text-anchor="middle" fill="#f0f4f8" font-size="13" font-weight="600">2 · TCP</text>
+    <text x="210" y="178" text-anchor="middle" fill="#6d7788" font-size="10">B@>9=>5 @C:>?>60B85</text>
+    <line x1="210" y1="190" x2="210" y2="212" stroke="#79b8ff" stroke-width="2" marker-end="url(#a2)"/>
+    <rect x="110" y="216" width="200" height="40" rx="6" fill="#1f2938" stroke="#3fb950" stroke-width="1.5"/>
+    <text x="210" y="242" text-anchor="middle" fill="#f0f4f8" font-size="13" font-weight="600">3 · TLS (HTTPS)</text>
+    <text x="210" y="258" text-anchor="middle" fill="#6d7788" font-size="10">A5@B8D8:0B, A5AA8>==K9 :;NG</text>
+    <line x1="210" y1="270" x2="210" y2="292" stroke="#79b8ff" stroke-width="2" marker-end="url(#a2)"/>
+    <rect x="110" y="296" width="200" height="40" rx="6" fill="#1f2938" stroke="#3fb950" stroke-width="1.5"/>
+    <text x="210" y="322" text-anchor="middle" fill="#f0f4f8" font-size="13" font-weight="600">4 · HTTP-70?@>A / >B25B</text>
+    <text x="210" y="338" text-anchor="middle" fill="#6d7788" font-size="10">703>;>2:8, HTML, @5AC@AK</text>
+    <line x1="210" y1="350" x2="210" y2="372" stroke="#79b8ff" stroke-width="2" marker-end="url(#a2)"/>
+    <rect x="110" y="376" width="200" height="32" rx="6" fill="rgba(61,149,245,0.15)" stroke="#3d95f5" stroke-width="1.2"/>
+    <text x="210" y="396" text-anchor="middle" fill="#a8b5c4" font-size="12" font-weight="600">5 · 0@A8=3, layout, paint</text>
+  </g>
+</svg>

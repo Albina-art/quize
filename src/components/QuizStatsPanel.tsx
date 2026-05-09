@@ -131,7 +131,7 @@ export default function QuizStatsPanel() {
         </Box>
       </Box>
       <Typography variant="caption" color="text.secondary" sx={{ display: "block", mt: 1.25, opacity: 0.9 }}>
-        Тест и самооценка сохраняются в вашей строке браузера (идентификатор устройства), ответы — в общей базе.
+        Прогресс теста и тренировки привязан к вашему аккаунту; сами тексты ответов — в общей базе вопросов.
       </Typography>
     </Paper>
   );

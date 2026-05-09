@@ -1,5 +1,6 @@
 "use client";
 
+import AuthSessionBar from "@/components/AuthSessionBar";
 import AddCardRoundedIcon from "@mui/icons-material/AddCardRounded";
 import EditNoteRoundedIcon from "@mui/icons-material/EditNoteRounded";
 import FactCheckRoundedIcon from "@mui/icons-material/FactCheckRounded";
@@ -27,6 +28,16 @@ export default function SiteHeader({
 
   return (
     <Stack spacing={2}>
+      <Box
+        sx={{
+          display: "flex",
+          justifyContent: "flex-end",
+          alignItems: "center",
+          width: "100%",
+        }}
+      >
+        <AuthSessionBar />
+      </Box>
       <Box
         sx={{
           display: "grid",

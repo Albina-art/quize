@@ -105,18 +105,49 @@ const components: Components = {
       {children}
     </Box>
   ),
-  a: ({ href, children }) => (
-    <Link
-      href={href ?? "#"}
-      color="secondary"
-      underline="hover"
-      target="_blank"
-      rel="noopener noreferrer"
-      sx={{ fontWeight: 500 }}
-    >
-      {children}
-    </Link>
-  ),
+  a: ({ href, children }) => {
+    const u = href ?? "#";
+    const isHash = u.startsWith("#");
+    const isInternal = u.startsWith("/") && !u.startsWith("//");
+    return (
+      <Link
+        href={u}
+        color="secondary"
+        underline="hover"
+        target={isHash || isInternal ? undefined : "_blank"}
+        rel={isHash || isInternal ? undefined : "noopener noreferrer"}
+        sx={{ fontWeight: 500 }}
+      >
+        {children}
+      </Link>
+    );
+  },
+  img: ({ src, alt }) => {
+    if (!src) return null;
+    return (
+      <Box
+        component="figure"
+        sx={{ m: 0, mb: 2.5, maxWidth: "100%" }}
+      >
+        <Box
+          component="img"
+          src={src}
+          alt={alt ?? ""}
+          loading="lazy"
+          decoding="async"
+          sx={{
+            maxWidth: "100%",
+            height: "auto",
+            display: "block",
+            mx: "auto",
+            borderRadius: "6px",
+            border: "1px solid",
+            borderColor: "divider",
+          }}
+        />
+      </Box>
+    );
+  },
   pre: ({ children }) => (
     <Paper
       variant="outlined"

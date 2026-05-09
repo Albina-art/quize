@@ -346,7 +346,7 @@ function McqPageInner() {
             </Typography>
           </Stack>
         ) : (
-          <Stack spacing={2.5} sx={{ maxWidth: 720, mx: "auto", width: "100%" }}>
+          <Stack spacing={2.5} sx={{ maxWidth: 1000, mx: "auto", width: "100%" }}>
             <Box
               sx={{
                 display: "flex",
@@ -565,7 +565,7 @@ function McqPageInner() {
         <Stack
           direction={{ xs: "column", sm: "row" }}
           spacing={1.5}
-          sx={{ maxWidth: 720, mx: "auto", width: "100%" }}
+          sx={{ maxWidth: 1000, mx: "auto", width: "100%" }}
         >
           <Button
             fullWidth

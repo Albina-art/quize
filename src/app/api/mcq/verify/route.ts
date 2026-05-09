@@ -1,17 +1,11 @@
 import { NextResponse } from "next/server";
-import { getQuizDeviceId } from "@/lib/quizDeviceServer";
+import { requireUser } from "@/lib/auth/requireUser";
 import { prisma } from "@/lib/prisma";
 
 export async function POST(request: Request) {
+  const auth = await requireUser(request);
+  if (!auth.ok) return auth.response;
   try {
-    const deviceId = getQuizDeviceId(request);
-    if (!deviceId) {
-      return NextResponse.json(
-        { error: "Нужен заголовок X-Quiz-Device-Id." },
-        { status: 400 },
-      );
-    }
-
     const body = (await request.json()) as {
       questionId?: unknown;
       optionId?: unknown;
@@ -53,9 +47,9 @@ export async function POST(request: Request) {
 
     await prisma.mcqQuestionProgress.upsert({
       where: {
-        deviceId_questionId: { deviceId, questionId },
+        userId_questionId: { userId: auth.userId, questionId },
       },
-      create: { deviceId, questionId, lastCorrect },
+      create: { userId: auth.userId, questionId, lastCorrect },
       update: { lastCorrect },
     });
 

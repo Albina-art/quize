@@ -1,30 +1,24 @@
 import { NextResponse } from "next/server";
-import { getQuizDeviceId } from "@/lib/quizDeviceServer";
+import { requireUser } from "@/lib/auth/requireUser";
 import { prisma } from "@/lib/prisma";
 
-/** Агрегаты по сохранённым ответам (MCQ и тренажёр) для этого устройства. */
 export async function GET(request: Request) {
+  const auth = await requireUser(request);
+  if (!auth.ok) return auth.response;
   try {
-    const deviceId = getQuizDeviceId(request);
-    if (!deviceId) {
-      return NextResponse.json(
-        { error: "Нужен заголовок X-Quiz-Device-Id." },
-        { status: 400 },
-      );
-    }
-
+    const uid = auth.userId;
     const [mcqCorrect, mcqWrong, trainerKnow, trainerMiss] = await Promise.all([
       prisma.mcqQuestionProgress.count({
-        where: { deviceId, lastCorrect: true },
+        where: { userId: uid, lastCorrect: true },
       }),
       prisma.mcqQuestionProgress.count({
-        where: { deviceId, lastCorrect: false },
+        where: { userId: uid, lastCorrect: false },
       }),
       prisma.trainerQuestionProgress.count({
-        where: { deviceId, knewAnswer: true },
+        where: { userId: uid, knewAnswer: true },
       }),
       prisma.trainerQuestionProgress.count({
-        where: { deviceId, knewAnswer: false },
+        where: { userId: uid, knewAnswer: false },
       }),
     ]);
 

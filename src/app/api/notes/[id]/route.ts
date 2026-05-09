@@ -1,19 +1,14 @@
 import { NextResponse } from "next/server";
-import { getQuizDeviceId } from "@/lib/quizDeviceServer";
+import { prismaClientErrorMessage } from "@/lib/prismaHttpError";
+import { requireUser } from "@/lib/auth/requireUser";
 import { prisma } from "@/lib/prisma";
 
 type RouteContext = { params: Promise<{ id: string }> };
 
 export async function PATCH(request: Request, ctx: RouteContext) {
+  const auth = await requireUser(request);
+  if (!auth.ok) return auth.response;
   try {
-    const deviceId = getQuizDeviceId(request);
-    if (!deviceId) {
-      return NextResponse.json(
-        { error: "Нужен заголовок X-Quiz-Device-Id." },
-        { status: 400 },
-      );
-    }
-
     const { id } = await ctx.params;
     if (!id) {
       return NextResponse.json({ error: "Нужен id." }, { status: 400 });
@@ -25,7 +20,7 @@ export async function PATCH(request: Request, ctx: RouteContext) {
     };
 
     const note = await prisma.markdownNote.findFirst({
-      where: { id, deviceId },
+      where: { id, userId: auth.userId },
       select: { id: true },
     });
     if (!note) {
@@ -42,28 +37,26 @@ export async function PATCH(request: Request, ctx: RouteContext) {
     });
 
     return NextResponse.json(updated);
-  } catch {
-    return NextResponse.json({ error: "Не удалось обновить заметку." }, { status: 500 });
+  } catch (e) {
+    console.error("[PATCH /api/notes]", e);
+    return NextResponse.json(
+      { error: prismaClientErrorMessage("Не удалось обновить заметку.", e) },
+      { status: 500 },
+    );
   }
 }
 
 export async function DELETE(request: Request, ctx: RouteContext) {
+  const auth = await requireUser(request);
+  if (!auth.ok) return auth.response;
   try {
-    const deviceId = getQuizDeviceId(request);
-    if (!deviceId) {
-      return NextResponse.json(
-        { error: "Нужен заголовок X-Quiz-Device-Id." },
-        { status: 400 },
-      );
-    }
-
     const { id } = await ctx.params;
     if (!id) {
       return NextResponse.json({ error: "Нужен id." }, { status: 400 });
     }
 
     const note = await prisma.markdownNote.findFirst({
-      where: { id, deviceId },
+      where: { id, userId: auth.userId },
       select: { id: true },
     });
     if (!note) {
@@ -72,7 +65,11 @@ export async function DELETE(request: Request, ctx: RouteContext) {
 
     await prisma.markdownNote.delete({ where: { id } });
     return NextResponse.json({ ok: true });
-  } catch {
-    return NextResponse.json({ error: "Не удалось удалить заметку." }, { status: 500 });
+  } catch (e) {
+    console.error("[DELETE /api/notes]", e);
+    return NextResponse.json(
+      { error: prismaClientErrorMessage("Не удалось удалить заметку.", e) },
+      { status: 500 },
+    );
   }
 }

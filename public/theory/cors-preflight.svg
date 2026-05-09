@@ -1,0 +1,27 @@
+<svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 720 340" role="img" aria-labelledby="t d">
+  <title id="t">Preflight CORS 2 1@0C75@5</title>
+  <desc id="d">0?@>A A >4=>3> 8AB>G=8:0 : API =0 4@C3><: A=0G0;0 OPTIONS, 70B5< >A=>2=>9 <5B>4 ?@8 @07@5H5=88 A5@25@0</desc>
+  <rect width="720" height="340" fill="#161d27" rx="8"/>
+  <text x="360" y="28" fill="#f0f4f8" font-size="15" font-weight="600" text-anchor="middle" font-family="system-ui,sans-serif">Cross-origin: preflight 8 >A=>2=>9 70?@>A</text>
+  <defs>
+    <marker id="ar" markerWidth="8" markerHeight="8" refX="7" refY="4" orient="auto"><path d="M0,0 L8,4 L0,8 Z" fill="#79b8ff"/></marker>
+    <marker id="ar2" markerWidth="8" markerHeight="8" refX="1" refY="4" orient="auto"><path d="M8,0 L0,4 L8,8 Z" fill="#3fb950"/></marker>
+  </defs>
+  <rect x="32" y="56" width="180" height="52" rx="8" fill="#1f2938" stroke="#3d95f5" stroke-width="1.5"/>
+  <text x="122" y="88" text-anchor="middle" fill="#a8b5c4" font-size="13" font-family="system-ui,sans-serif">!B@0=8F0</text>
+  <text x="122" y="102" text-anchor="middle" fill="#6d7788" font-size="10" font-family="system-ui,sans-serif">origin: https://app.ru</text>
+  <rect x="508" y="56" width="180" height="52" rx="8" fill="#1f2938" stroke="#3fb950" stroke-width="1.5"/>
+  <text x="598" y="88" text-anchor="middle" fill="#a8b5c4" font-size="13" font-family="system-ui,sans-serif">API</text>
+  <text x="598" y="102" text-anchor="middle" fill="#6d7788" font-size="10" font-family="system-ui,sans-serif">origin: https://api.io</text>
+  <text x="360" y="142" text-anchor="middle" fill="#3fb950" font-size="11" font-family="system-ui,sans-serif">1 · Preflight OPTIONS + Origin</text>
+  <line x1="212" y1="148" x2="508" y2="148" stroke="#79b8ff" stroke-width="1.5" marker-end="url(#ar)"/>
+  <line x1="508" y1="172" x2="212" y2="172" stroke="#3fb950" stroke-width="1.5" marker-end="url(#ar2)"/>
+  <text x="360" y="168" text-anchor="middle" fill="#a8b5c4" font-size="10" font-family="system-ui,sans-serif">204/200 · Allow-Methods, Allow-Headers, Allow-Origin&</text>
+  <text x="360" y="208" text-anchor="middle" fill="#79b8ff" font-size="11" font-family="system-ui,sans-serif">2 · A=>2=>9 70?@>A (POST, fetch, A :C:0<8 ?@8 =5>1E>48<>AB8)</text>
+  <line x1="212" y1="214" x2="508" y2="214" stroke="#79b8ff" stroke-width="1.5" marker-end="url(#ar)"/>
+  <line x1="508" y1="238" x2="212" y2="238" stroke="#3fb950" stroke-width="1.5" marker-end="url(#ar2)"/>
+  <text x="360" y="234" text-anchor="middle" fill="#a8b5c4" font-size="10" font-family="system-ui,sans-serif">>B25B A Access-Control-Allow-Origin (+ Credentials ?@8 :C:0E)</text>
+  <rect x="48" y="262" width="624" height="64" rx="6" fill="rgba(61,149,245,0.1)" stroke="#3d4758"/>
+  <text x="360" y="286" text-anchor="middle" fill="#a8b5c4" font-size="11" font-family="system-ui,sans-serif">@>AB>9 GET 157 :0AB><=KE 703>;>2:>2 : «?C1;8G=><C» @5AC@AC  preflight <>65B =5 >B?@02;OBLAO</text>
+  <text x="360" y="308" text-anchor="middle" fill="#6d7788" font-size="10" font-family="system-ui,sans-serif">>;8B8:C ?@8<5=O5B B>;L:> 1@0C75@; curl/Postman 157 CORS->3@0=8G5=89</text>
+</svg>
