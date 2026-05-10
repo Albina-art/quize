@@ -73,8 +73,12 @@ export function createAppTheme() {
         lineHeight: 1.5,
       },
       body1: {
-        fontSize: "1.5rem",
-        lineHeight: 1.68,
+        fontSize: "1.25rem",
+        lineHeight: 1.62,
+        "@media (min-width:600px)": {
+          fontSize: "1.5rem",
+          lineHeight: 1.68,
+        },
       },
       body2: {
         fontSize: "1.0625rem",
@@ -174,6 +178,32 @@ export function createAppTheme() {
         defaultProps: {
           variant: "outlined",
           fullWidth: true,
+        },
+      },
+      MuiSelect: {
+        defaultProps: {
+          variant: "outlined",
+        },
+        styleOverrides: {
+          select: ({ theme }) => ({
+            paddingLeft: theme.spacing(2),
+            paddingTop: theme.spacing(2),
+            paddingBottom: theme.spacing(2),
+            [theme.breakpoints.down("sm")]: {
+              paddingLeft: theme.spacing(1.75),
+              paddingTop: 0,
+              paddingBottom: 0,
+              height: "50px",
+              display: "flex",
+              alignItems: "center",
+              justifyContent: "center",
+            },
+            [theme.breakpoints.up("sm")]: {
+              paddingLeft: theme.spacing(1.75),
+              paddingTop: theme.spacing(1.5),
+              paddingBottom: theme.spacing(1.5),
+            },
+          }),
         },
       },
     },

@@ -1,8 +1,11 @@
 "use client";
 
 import QuizPageShell from "@/components/QuizPageShell";
+import QuizStatsPanel from "@/components/QuizStatsPanel";
 import SiteHeader from "@/components/SiteHeader";
 import TopicChipFilter from "@/components/TopicChipFilter";
+import { quizFetch } from "@/lib/quizFetch";
+import { recordTrainerSelfGradeSynced } from "@/lib/quizStats";
 import CancelRoundedIcon from "@mui/icons-material/CancelRounded";
 import CasinoRoundedIcon from "@mui/icons-material/CasinoRounded";
 import CheckCircleRoundedIcon from "@mui/icons-material/CheckCircleRounded";
@@ -27,12 +30,10 @@ import InputLabel from "@mui/material/InputLabel";
 import MenuItem from "@mui/material/MenuItem";
 import Select from "@mui/material/Select";
 import Stack from "@mui/material/Stack";
+import Tooltip from "@mui/material/Tooltip";
 import Typography from "@mui/material/Typography";
 import { alpha } from "@mui/material/styles";
 import { useCallback, useEffect, useMemo, useRef, useState } from "react";
-import QuizStatsPanel from "@/components/QuizStatsPanel";
-import { quizFetch } from "@/lib/quizFetch";
-import { recordTrainerSelfGradeSynced } from "@/lib/quizStats";
 
 type Question = {
   id: number;
@@ -235,6 +236,7 @@ export default function Home() {
           borderBottom: 1,
           borderColor: "divider",
           bgcolor: "background.paper",
+          paddingLeft: { xs: "20px" },
         }}
       >
         <IconButton
@@ -467,7 +469,7 @@ export default function Home() {
                             setMessageSeverity("error");
                             setMessage(
                               (await res.json().catch(() => ({})))?.error ??
-                                "Не удалось сохранить самооценку.",
+                              "Не удалось сохранить самооценку.",
                             );
                             return;
                           }
@@ -497,7 +499,7 @@ export default function Home() {
                             setMessageSeverity("error");
                             setMessage(
                               (await res.json().catch(() => ({})))?.error ??
-                                "Не удалось сохранить самооценку.",
+                              "Не удалось сохранить самооценку.",
                             );
                             return;
                           }
@@ -536,30 +538,77 @@ export default function Home() {
         }}
       >
         <Stack
-          direction={{ xs: "column", sm: "row" }}
+          direction="row"
           spacing={1.5}
-          sx={{ maxWidth: 1000, mx: "auto", width: "100%" }}
+          sx={{
+            maxWidth: 1000,
+            mx: "auto",
+            width: { xs: "max-content", sm: "100%" },
+            justifyContent: { xs: "space-between", sm: "stretch" },
+            alignItems: "stretch",
+            flexWrap: "nowrap",
+          }}
         >
-          <Button
-            fullWidth
-            variant="outlined"
-            color="inherit"
-            size="large"
-            onClick={closeQuestionModal}
-          >
-            Закрыть
-          </Button>
-          <Button
-            fullWidth
-            variant="outlined"
-            color="secondary"
-            size="large"
-            disabled={questionLoading || !current}
-            startIcon={<NavigateNextRoundedIcon />}
-            onClick={() => getRandomQuestion()}
-          >
-            Следующий вопрос
-          </Button>
+          <Tooltip title="Закрыть">
+            <Button
+              fullWidth
+              variant="outlined"
+              color="inherit"
+              size="large"
+              aria-label="Закрыть"
+              onClick={closeQuestionModal}
+              startIcon={<CloseRoundedIcon />}
+              sx={{
+                flex: { xs: "0 1 auto", sm: 1 },
+                minWidth: { xs: 48, sm: "auto" },
+                maxWidth: { xs: "max-content", sm: "none" },
+                px: { xs: 1.25, sm: 2 },
+                justifyContent: { xs: "center", sm: "flex-start" },
+                "& .MuiButton-startIcon": {
+                  m: 0,
+                  mr: { sm: 1 },
+                },
+              }}
+            >
+              <Box component="span" sx={{ display: { xs: "none", sm: "inline" } }}>
+                Закрыть
+              </Box>
+            </Button>
+          </Tooltip>
+          <Tooltip title="Следующий вопрос">
+            <Box
+              component="span"
+              sx={{
+                flex: { xs: "0 1 auto", sm: 1 },
+                display: "flex",
+                minWidth: 0,
+              }}
+            >
+              <Button
+                fullWidth
+                variant="outlined"
+                color="secondary"
+                size="large"
+                aria-label="Следующий вопрос"
+                disabled={questionLoading || !current}
+                startIcon={<NavigateNextRoundedIcon />}
+                onClick={() => getRandomQuestion()}
+                sx={{
+                  minWidth: { xs: 48, sm: "auto" },
+                  px: { xs: 1.25, sm: 2 },
+                  justifyContent: { xs: "center", sm: "flex-start" },
+                  "& .MuiButton-startIcon": {
+                    m: 0,
+                    mr: { sm: 1 },
+                  },
+                }}
+              >
+                <Box component="span" sx={{ display: { xs: "none", sm: "inline" } }}>
+                  Следующий вопрос
+                </Box>
+              </Button>
+            </Box>
+          </Tooltip>
         </Stack>
       </Box>
     </Dialog>
@@ -586,7 +635,7 @@ export default function Home() {
             <Typography variant="h6" sx={{ mb: 1 }}>
               Случайный вопрос
             </Typography>
-            <Typography variant="body1" color="text.secondary" sx={{ mb: 2 }}>
+            <Typography variant="body1" color="text.secondary" sx={{ mb: 2, fontSize: { xs: "0.9375rem" } }}>
               Получите карточку из базы и проверьте себя.
             </Typography>
 

@@ -18,7 +18,7 @@ export default function QuizPageShell({
         background: (t) =>
           `linear-gradient(165deg, ${t.palette.background.default} 0%, ${t.palette.background.paper} 44%, ${t.palette.background.default} 100%)`,
         py: { xs: 2, sm: 4 },
-        px: { xs: 1.5, sm: 2 },
+        px: { xs: 0, sm: 2 },
       }}
     >
       <Container maxWidth={maxWidth}>{children}</Container>

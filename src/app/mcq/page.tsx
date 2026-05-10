@@ -30,6 +30,7 @@ import RadioGroup from "@mui/material/RadioGroup";
 import Select from "@mui/material/Select";
 import Stack from "@mui/material/Stack";
 import IconButton from "@mui/material/IconButton";
+import Tooltip from "@mui/material/Tooltip";
 import Typography from "@mui/material/Typography";
 import { alpha, useTheme } from "@mui/material/styles";
 import { useSearchParams } from "next/navigation";
@@ -310,6 +311,7 @@ function McqPageInner() {
           color="inherit"
           onClick={closeQuestionModal}
           aria-label="Закрыть"
+          sx={{ marginLeft: { xs: "0px" } }}
         >
           <CloseRoundedIcon />
         </IconButton>
@@ -563,43 +565,113 @@ function McqPageInner() {
         }}
       >
         <Stack
-          direction={{ xs: "column", sm: "row" }}
+          direction="row"
           spacing={1.5}
-          sx={{ maxWidth: 1000, mx: "auto", width: "100%" }}
+          sx={{
+            maxWidth: 1000,
+            mx: "auto",
+            width: { xs: "max-content", sm: "100%" },
+            justifyContent: { xs: "space-between", sm: "stretch" },
+            alignItems: "stretch",
+            flexWrap: "nowrap",
+          }}
         >
-          <Button
-            fullWidth
-            variant="outlined"
-            color="inherit"
-            size="large"
-            onClick={closeQuestionModal}
-          >
-            Закрыть
-          </Button>
-          <Button
-            fullWidth
-            variant="contained"
-            color="primary"
-            size="large"
-            disabled={
-              questionLoading || !current || !selectedId || verified !== null
-            }
-            startIcon={<FactCheckRoundedIcon />}
-            onClick={handleVerify}
-          >
-            Проверить ответ
-          </Button>
-          <Button
-            fullWidth
-            variant="outlined"
-            color="secondary"
-            size="large"
-            disabled={questionLoading || !current}
-            startIcon={<NavigateNextRoundedIcon />}
-            onClick={() => loadQuestion()}
-          >
-            Следующий вопрос
-          </Button>
+          <Tooltip title="Закрыть">
+            <Button
+              fullWidth
+              variant="outlined"
+              color="inherit"
+              size="large"
+              aria-label="Закрыть"
+              onClick={closeQuestionModal}
+              startIcon={<CloseRoundedIcon />}
+              sx={{
+                flex: { xs: "0 1 auto", sm: 1 },
+                minWidth: { xs: 48, sm: "auto" },
+                maxWidth: { xs: "max-content", sm: "none" },
+                px: { xs: 1.25, sm: 2 },
+                justifyContent: { xs: "center", sm: "flex-start" },
+                "& .MuiButton-startIcon": {
+                  m: 0,
+                  mr: { sm: 1 },
+                },
+              }}
+            >
+              <Box component="span" sx={{ display: { xs: "none", sm: "inline" } }}>
+                Закрыть
+              </Box>
+            </Button>
+          </Tooltip>
+          <Tooltip title="Проверить ответ">
+            <Box
+              component="span"
+              sx={{
+                flex: { xs: "0 1 auto", sm: 1 },
+                display: "flex",
+                minWidth: 0,
+              }}
+            >
+              <Button
+                fullWidth
+                variant="contained"
+                color="primary"
+                size="large"
+                aria-label="Проверить ответ"
+                disabled={
+                  questionLoading || !current || !selectedId || verified !== null
+                }
+                startIcon={<FactCheckRoundedIcon />}
+                onClick={handleVerify}
+                sx={{
+                  minWidth: { xs: 48, sm: "auto" },
+                  px: { xs: 1.25, sm: 2 },
+                  justifyContent: { xs: "center", sm: "flex-start" },
+                  "& .MuiButton-startIcon": {
+                    m: 0,
+                    mr: { sm: 1 },
+                  },
+                }}
+              >
+                <Box component="span" sx={{ display: { xs: "none", sm: "inline" } }}>
+                  Проверить ответ
+                </Box>
+              </Button>
+            </Box>
+          </Tooltip>
+          <Tooltip title="Следующий вопрос">
+            <Box
+              component="span"
+              sx={{
+                flex: { xs: "0 1 auto", sm: 1 },
+                display: "flex",
+                minWidth: 0,
+              }}
+            >
+              <Button
+                fullWidth
+                variant="outlined"
+                color="secondary"
+                size="large"
+                aria-label="Следующий вопрос"
+                disabled={questionLoading || !current}
+                startIcon={<NavigateNextRoundedIcon />}
+                onClick={() => loadQuestion()}
+                sx={{
+                  minWidth: { xs: 48, sm: "auto" },
+                  px: { xs: 1.25, sm: 2 },
+                  justifyContent: { xs: "center", sm: "flex-start" },
+                  "& .MuiButton-startIcon": {
+                    m: 0,
+                    mr: { sm: 1 },
+                  },
+                }}
+              >
+                <Box component="span" sx={{ display: { xs: "none", sm: "inline" } }}>
+                  Следующий вопрос
+                </Box>
+              </Button>
+            </Box>
+          </Tooltip>
         </Stack>
       </Box>
     </Dialog>

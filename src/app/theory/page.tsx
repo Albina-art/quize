@@ -24,7 +24,6 @@ export default function TheoryIndexPage() {
       <Stack spacing={3}>
         <SiteHeader
           title="Теория"
-          subtitle="Нажмите на карточку темы, чтобы открыть конспект, или воспользуйтесь кнопками ниже для теста."
         />
 
         <Stack spacing={2}>
@@ -83,7 +82,7 @@ export default function TheoryIndexPage() {
                           width: "100%",
                           height: "auto",
                           maxWidth: 176,
-                          maxHeight: { xs: 160, sm: 140 },
+                          maxHeight: { xs: 100, sm: 140 },
                           objectFit: "contain",
                           display: "block",
                         }}

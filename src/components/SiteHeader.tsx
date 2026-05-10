@@ -152,7 +152,7 @@ export default function SiteHeader({
         >
           {title}
         </Typography>
-        {subtitle ? (
+        {subtitle &&(
           <Typography
             variant="body1"
             color="text.secondary"
@@ -166,7 +166,7 @@ export default function SiteHeader({
           >
             {subtitle}
           </Typography>
-        ) : null}
+        ) }
       </Stack>
     </Stack>
   );

@@ -6,8 +6,10 @@ import {
   type TopicVisualIcon,
 } from "@/content/topicDisplay";
 import AppsRoundedIcon from "@mui/icons-material/AppsRounded";
+import CheckCircleRoundedIcon from "@mui/icons-material/CheckCircleRounded";
 import ChevronLeftRoundedIcon from "@mui/icons-material/ChevronLeftRounded";
 import ChevronRightRoundedIcon from "@mui/icons-material/ChevronRightRounded";
+import HighlightOffRoundedIcon from "@mui/icons-material/HighlightOffRounded";
 import HubRoundedIcon from "@mui/icons-material/HubRounded";
 import LabelImportantRoundedIcon from "@mui/icons-material/LabelImportantRounded";
 import LockRoundedIcon from "@mui/icons-material/LockRounded";
@@ -19,10 +21,8 @@ import type { Theme } from "@mui/material/styles";
 import { alpha, keyframes } from "@mui/material/styles";
 import type { SvgIconProps } from "@mui/material/SvgIcon";
 import Typography from "@mui/material/Typography";
-import CheckCircleRoundedIcon from "@mui/icons-material/CheckCircleRounded";
-import HighlightOffRoundedIcon from "@mui/icons-material/HighlightOffRounded";
 import type { ComponentType } from "react";
-import { useCallback, useEffect, useRef, useState } from "react";
+import { useCallback, useLayoutEffect, useRef, useState } from "react";
 
 /** Плавное «дыхание» свечения у выбранной карточки */
 const selectedGlowPulse = keyframes`
@@ -41,7 +41,7 @@ const selectedGlowPulse = keyframes`
   }
 `;
 
-const SLIDE_WIDTH = { xs: "min(90vw, 320px)", sm: 320 } as const;
+const SLIDE_WIDTH = { xs: "min(90vw, 100%)", sm: 320 } as const;
 
 const TOPIC_ICONS: Record<TopicVisualIcon, ComponentType<SvgIconProps>> = {
   all: AppsRoundedIcon,
@@ -69,8 +69,8 @@ function TopicSlideIcon({
         display: "flex",
         alignItems: "center",
         justifyContent: "center",
-        width: ICON_BOX,
-        height: ICON_BOX,
+        width: { xs: "40px", sm: ICON_BOX },
+        height: { xs: "40px", sm: ICON_BOX },
         borderRadius: 2,
         transition:
           "transform 0.32s cubic-bezier(0.34, 1.3, 0.64, 1), background-color 0.28s ease, box-shadow 0.28s ease",
@@ -146,6 +146,8 @@ export default function TopicChipFilter({
   const scrollRef = useRef<HTMLDivElement>(null);
   const [canScrollLeft, setCanScrollLeft] = useState(false);
   const [canScrollRight, setCanScrollRight] = useState(false);
+  /** До первого layout на клиенте не включаем стрелки — иначе рассинхрон с SSR и предупреждение гидратации */
+  const [scrollMetricsReady, setScrollMetricsReady] = useState(false);
 
   const updateScrollState = useCallback(() => {
     const el = scrollRef.current;
@@ -156,7 +158,8 @@ export default function TopicChipFilter({
     setCanScrollRight(scrollLeft < max - 2);
   }, []);
 
-  useEffect(() => {
+  useLayoutEffect(() => {
+    setScrollMetricsReady(true);
     updateScrollState();
     const el = scrollRef.current;
     if (!el) return;
@@ -306,6 +309,7 @@ export default function TopicChipFilter({
 
       <Box
         sx={{
+          position: "relative",
           display: "flex",
           alignItems: "center",
           gap: { xs: 0.5, sm: 1 },
@@ -314,21 +318,24 @@ export default function TopicChipFilter({
         <IconButton
           aria-label="Прокрутить темы назад"
           onClick={() => scrollByDir(-1)}
-          disabled={!loaded || !canScrollLeft}
+          disableRipple
+          disabled={!loaded || !scrollMetricsReady || !canScrollLeft}
           sx={{
             alignSelf: "center",
             flexShrink: 0,
             color: "secondary.light",
-            bgcolor: (t) => alpha(t.palette.background.paper, 0.85),
+            bgcolor: { xs: "transparent", sm: (t) => alpha(t.palette.background.paper, 0.85) },
             border: 2,
-            borderColor: (t) => alpha(t.palette.secondary.main, 0.35),
+            borderColor: { xs: "transparent", sm: (t) => alpha(t.palette.secondary.main, 0.35) },
             transition: "transform 0.25s ease, box-shadow 0.25s ease, border-color 0.25s ease",
             "&:hover:not(:disabled)": {
-              bgcolor: "action.hover",
-              borderColor: "secondary.light",
+              bgcolor: { xs: "transparent", sm: "action.hover" },
+              borderColor: { xs: "transparent", sm: "secondary.light" },
               transform: "scale(1.06)",
-              boxShadow: (t) => `0 4px 18px ${alpha(t.palette.secondary.main, 0.28)}`,
+              boxShadow: { xs: "none", sm: (t) => `0 4px 18px ${alpha(t.palette.secondary.main, 0.28)}` },
             },
+            position: { xs: "absolute", sm: "relative" },
+            left: { xs: "5px", sm: "auto" },
             "&.Mui-disabled": { opacity: 0.35 },
           }}
         >
@@ -349,7 +356,7 @@ export default function TopicChipFilter({
             overflowY: "hidden",
             /** Запас под размытие box-shadow и свечение — иначе режется overflow */
             minHeight: { xs: 236, sm: 244 },
-            py: 3.5,
+            py: { xs: 0, sm: 3.5 },
             px: { xs: 3, sm: 3.5 },
             scrollSnapType: "x mandatory",
             scrollPaddingLeft: 12,
@@ -399,20 +406,20 @@ export default function TopicChipFilter({
                   sx={{
                     mt: 0.75,
                     lineHeight: 1.5,
-                    fontSize: "1.0625rem" ,
+                    fontSize: "1.0625rem",
                     fontWeight: 450,
                     color: isAll ? "rgba(255,255,255,0.92)" : "text.secondary",
                   }}
                 >
                   {ALL_TOPICS_BUTTON_COPY.description}
                 </Typography>
-                {aggregateProgress ? (
+                {aggregateProgress && (
                   <ProgressMarks
                     ok={aggregateProgress.ok}
                     bad={aggregateProgress.bad}
                     selected={isAll}
                   />
-                ) : null}
+                )}
               </Box>
             </Box>
           </Button>
@@ -423,21 +430,24 @@ export default function TopicChipFilter({
         <IconButton
           aria-label="Прокрутить темы вперёд"
           onClick={() => scrollByDir(1)}
-          disabled={!loaded || !canScrollRight}
+          disableRipple
+          disabled={!loaded || !scrollMetricsReady || !canScrollRight}
           sx={{
             alignSelf: "center",
             flexShrink: 0,
             color: "secondary.light",
-            bgcolor: (t) => alpha(t.palette.background.paper, 0.85),
+            bgcolor: { xs: "transparent", sm: (t) => alpha(t.palette.background.paper, 0.85) },
             border: 2,
-            borderColor: (t) => alpha(t.palette.secondary.main, 0.35),
+            borderColor: { xs: "transparent", sm: (t) => alpha(t.palette.secondary.main, 0.35) },
             transition: "transform 0.25s ease, box-shadow 0.25s ease, border-color 0.25s ease",
             "&:hover:not(:disabled)": {
-              bgcolor: "action.hover",
-              borderColor: "secondary.light",
+              bgcolor: { xs: "transparent", sm: "action.hover" },
+              borderColor: { xs: "transparent", sm: "secondary.light" },
               transform: "scale(1.06)",
-              boxShadow: (t) => `0 4px 18px ${alpha(t.palette.secondary.main, 0.28)}`,
+              boxShadow: { xs: "none", sm: (t) => `0 4px 18px ${alpha(t.palette.secondary.main, 0.28)}` },
             },
+            position: { xs: "absolute", sm: "relative" },
+            right: { xs: "5px", sm: "auto" },
             "&.Mui-disabled": { opacity: 0.35 },
           }}
         >
