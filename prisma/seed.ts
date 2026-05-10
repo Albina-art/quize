@@ -69,6 +69,32 @@ Access-Control-Allow-Credentials: true`,
 
 Опасность: злоумышленник в некоторых окружениях может подделать Origin: null (например, через песочницу) и получить доступ к API, если вы слепо разрешаете null. Безопаснее явно перечислять реальные домены; null — только если вы действительно работаете с локальными файлами или sandbox-iframe и понимаете риски. Для обычного веб-приложения null — плохая практика.`,
   },
+  {
+    topic: "CORS",
+    question:
+      "Что делает заголовок ответа Access-Control-Allow-Credentials и какие основные ограничения накладываются в сочетании с credentials?",
+    hint: "Связь с куками, fetch(..., { credentials: 'include' }) и запретом wildcard * у Allow-Origin.",
+    answer: `Заголовок Access-Control-Allow-Credentials — это CORS-заголовок ответа сервера. Он указывает браузеру, разрешено ли отправлять учётные данные (credentials) при кросс-доменном запросе.
+
+Какие данные считаются «учётными»:
+• Cookies
+• HTTP-аутентификация (Basic, Digest, etc.)
+• Сертификаты клиента (TLS client certificates)
+
+Как работает:
+• Access-Control-Allow-Credentials: true — браузер может отправлять учётные данные и использовать их на целевой стороне.
+• Нет заголовка или false — браузер не отправит учётные данные, даже если fetch с credentials: 'include' или XHR с withCredentials = true это запрашивают.
+
+Важные ограничения:
+1. Если значение true, нельзя использовать Access-Control-Allow-Origin: * — нужен конкретный origin (или динамическое отражение из доверенного списка).
+2. Нельзя использовать * в Access-Control-Allow-Headers и Access-Control-Allow-Methods — нужны конкретные значения.
+
+Пример:
+Access-Control-Allow-Origin: https://my-site.com
+Access-Control-Allow-Credentials: true
+
+Без Allow-Credentials: true не получится надёжно передать сессионную куку или авторизационные данные между разными доменами на уровне CORS.`,
+  },
 ];
 
 const httpsTlsTopic = "HTTPS / TCP / TLS";
@@ -428,6 +454,19 @@ const mcqSeed: {
       "application/json",
     ],
     correctIndex: 3,
+  },
+  {
+    topic: "CORS",
+    question:
+      "Что верно про заголовок Access-Control-Allow-Credentials в ответе сервера при кросс-доменном запросе с учётными данными?",
+    hint: "Сервер явно разрешает или запрещает передачу cookies и т.п.; сочетание с * у Allow-Origin.",
+    options: [
+      "true разрешает браузеру отправлять credentials; при этом нельзя отвечать Access-Control-Allow-Origin: *",
+      "Он обязателен для любого fetch без credentials",
+      "Достаточно только Allow-Credentials: true, origin может быть *",
+      "Заголовок ставит только браузер, сервер его не задаёт",
+    ],
+    correctIndex: 0,
   },
   {
     topic: browserPipelineTopic,
