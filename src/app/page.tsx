@@ -2,7 +2,7 @@
 
 import QuizPageShell from "@/components/QuizPageShell";
 import QuizStatsPanel from "@/components/QuizStatsPanel";
-import SiteHeader from "@/components/SiteHeader";
+import SitePageHeading from "@/components/SitePageHeading";
 import TopicChipFilter from "@/components/TopicChipFilter";
 import { quizFetch } from "@/lib/quizFetch";
 import { recordTrainerSelfGradeSynced } from "@/lib/quizStats";
@@ -617,7 +617,7 @@ export default function Home() {
   return (
     <QuizPageShell>
       <Stack spacing={3}>
-        <SiteHeader
+        <SitePageHeading
           title="Тренажёр вопросов"
           subtitle="Тема — кнопками или списком; можно тренироваться по всей базе. Новые карточки — на странице «Новая карточка»."
         />

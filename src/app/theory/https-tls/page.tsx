@@ -1,5 +1,5 @@
 import QuizPageShell from "@/components/QuizPageShell";
-import SiteHeader from "@/components/SiteHeader";
+import SitePageHeading from "@/components/SitePageHeading";
 import TheoryTopicBanner from "@/components/TheoryTopicBanner";
 import TheoryCollapsibleSections from "@/components/TheoryCollapsibleSections";
 import TheoryNavLink from "@/components/TheoryNavLink";
@@ -26,7 +26,7 @@ export default function HttpsTlsTheoryPage() {
   return (
     <QuizPageShell maxWidth="xl">
       <Stack spacing={3}>
-        <SiteHeader
+        <SitePageHeading
           title="HTTPS, SSL и TLS"
           subtitle="Безопасное соединение в вебе: шифрование, сертификаты и рукопожатие."
         />

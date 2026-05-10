@@ -1,5 +1,5 @@
 import QuizPageShell from "@/components/QuizPageShell";
-import SiteHeader from "@/components/SiteHeader";
+import SitePageHeading from "@/components/SitePageHeading";
 import TheoryCollapsibleSections from "@/components/TheoryCollapsibleSections";
 import TheoryNavLink from "@/components/TheoryNavLink";
 import TheoryTopicBanner from "@/components/TheoryTopicBanner";
@@ -27,7 +27,7 @@ export default function ReactIntroTheoryPage() {
   return (
     <QuizPageShell maxWidth="xl">
       <Stack spacing={3}>
-        <SiteHeader
+        <SitePageHeading
           title="Что такое React?"
           subtitle="Библиотека для UI от Meta: компоненты, JSX, состояние, виртуальный DOM и хуки."
         />

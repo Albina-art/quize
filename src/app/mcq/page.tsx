@@ -1,7 +1,7 @@
 "use client";
 
 import QuizPageShell from "@/components/QuizPageShell";
-import SiteHeader from "@/components/SiteHeader";
+import SitePageHeading from "@/components/SitePageHeading";
 import TopicChipFilter from "@/components/TopicChipFilter";
 import CasinoRoundedIcon from "@mui/icons-material/CasinoRounded";
 import CancelRoundedIcon from "@mui/icons-material/CancelRounded";
@@ -680,7 +680,7 @@ function McqPageInner() {
   return (
     <QuizPageShell>
       <Stack spacing={3}>
-        <SiteHeader
+        <SitePageHeading
           title="Тест: варианты ответов"
           subtitle="Выберите один вариант и проверьте себя. Ответ хранится на сервере — подсказки ключа нет."
         />
@@ -758,7 +758,7 @@ function McqPageFallback() {
   return (
     <QuizPageShell>
       <Stack spacing={3}>
-        <SiteHeader
+        <SitePageHeading
           title="Тест: варианты ответов"
           subtitle="Загрузка страницы теста…"
         />

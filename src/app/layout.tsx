@@ -1,6 +1,7 @@
 import type { Metadata } from "next";
 import { Inter } from "next/font/google";
 import "./globals.css";
+import AppChrome from "@/components/AppChrome";
 import MuiProvider from "@/components/MuiProvider";
 
 const inter = Inter({
@@ -22,7 +23,9 @@ export default function RootLayout({
   return (
     <html lang="ru" className={inter.variable}>
       <body className={inter.className}>
-        <MuiProvider>{children}</MuiProvider>
+        <MuiProvider>
+          <AppChrome>{children}</AppChrome>
+        </MuiProvider>
       </body>
     </html>
   );

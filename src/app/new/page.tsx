@@ -1,7 +1,7 @@
 "use client";
 
 import QuizPageShell from "@/components/QuizPageShell";
-import SiteHeader from "@/components/SiteHeader";
+import SitePageHeading from "@/components/SitePageHeading";
 import AddRoundedIcon from "@mui/icons-material/AddRounded";
 import Alert from "@mui/material/Alert";
 import Box from "@mui/material/Box";
@@ -52,7 +52,7 @@ export default function NewCardPage() {
   return (
     <QuizPageShell>
       <Stack spacing={3}>
-        <SiteHeader
+        <SitePageHeading
           title="Новая карточка"
           subtitle="Заполните тему, вопрос, при необходимости подсказку и ответ — затем сохраните в базу."
         />

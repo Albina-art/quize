@@ -1,7 +1,7 @@
 "use client";
 
 import QuizPageShell from "@/components/QuizPageShell";
-import SiteHeader from "@/components/SiteHeader";
+import SitePageHeading from "@/components/SitePageHeading";
 import {
   mcqUrlForTheorySlug,
   theoryTopics,
@@ -22,7 +22,7 @@ export default function TheoryIndexPage() {
   return (
     <QuizPageShell maxWidth="xl">
       <Stack spacing={3}>
-        <SiteHeader
+        <SitePageHeading
           title="Теория"
         />
 

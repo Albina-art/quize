@@ -5,7 +5,7 @@ import Stack from "@mui/material/Stack";
 import Typography from "@mui/material/Typography";
 import QuizPageShell from "@/components/QuizPageShell";
 import TheoryNavLink from "@/components/TheoryNavLink";
-import SiteHeader from "@/components/SiteHeader";
+import SitePageHeading from "@/components/SitePageHeading";
 import TheoryTopicBanner from "@/components/TheoryTopicBanner";
 import UrlBrowserOrderQuiz from "@/components/UrlBrowserOrderQuiz";
 
@@ -19,7 +19,7 @@ export default function UrlBrowserOrderPage() {
   return (
     <QuizPageShell>
       <Stack spacing={3}>
-        <SiteHeader
+        <SitePageHeading
           title="Порядок шагов при вводе URL"
           subtitle="Та же тема, что в статье — только перетащите этапы в правильную последовательность."
         />

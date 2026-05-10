@@ -8,19 +8,12 @@ import MenuBookRoundedIcon from "@mui/icons-material/MenuBookRounded";
 import QuizRoundedIcon from "@mui/icons-material/QuizRounded";
 import Box from "@mui/material/Box";
 import Button from "@mui/material/Button";
-import Chip from "@mui/material/Chip";
 import Stack from "@mui/material/Stack";
-import Typography from "@mui/material/Typography";
 import Link from "next/link";
 import { usePathname } from "next/navigation";
 
-export default function SiteHeader({
-  title,
-  subtitle,
-}: Readonly<{
-  title: string;
-  subtitle?: string;
-}>) {
+/** Постоянная навигация: не размонтируется при переходах между страницами. */
+export default function SiteNavShell() {
   const pathname = usePathname();
   const theoryActive = pathname.startsWith("/theory");
   const mcqActive = pathname === "/mcq";
@@ -108,66 +101,6 @@ export default function SiteHeader({
           Заметки
         </Button>
       </Box>
-
-      <Stack spacing={1} sx={{ alignItems: "flex-start" }}>
-        <Chip
-          icon={
-            theoryActive ? (
-              <MenuBookRoundedIcon />
-            ) : mcqActive ? (
-              <FactCheckRoundedIcon />
-            ) : notesActive ? (
-              <EditNoteRoundedIcon />
-            ) : (
-              <QuizRoundedIcon />
-            )
-          }
-          label={
-            theoryActive
-              ? "Теория · конспекты"
-              : mcqActive
-                ? "Тест · варианты ответов"
-                : notesActive
-                  ? "Заметки · Markdown"
-                  : "PostgreSQL · случайная выдача"
-          }
-          color="secondary"
-          variant="outlined"
-          size="medium"
-          sx={{ borderRadius: "6px", fontWeight: 500 }}
-        />
-        <Typography
-          variant="h4"
-          component="h1"
-          sx={{
-            ...(theoryActive && {
-              fontSize: { xs: "2rem", sm: "2.35rem" },
-              lineHeight: 1.25,
-            }),
-            background: (t) =>
-              `linear-gradient(120deg, ${t.palette.secondary.light}, white)`,
-            backgroundClip: "text",
-            WebkitTextFillColor: "transparent",
-          }}
-        >
-          {title}
-        </Typography>
-        {subtitle &&(
-          <Typography
-            variant="body1"
-            color="text.secondary"
-            sx={{
-              maxWidth: theoryActive ? 680 : 580,
-              ...(theoryActive && {
-                fontSize: "1.25rem",
-                lineHeight: 1.68,
-              }),
-            }}
-          >
-            {subtitle}
-          </Typography>
-        ) }
-      </Stack>
     </Stack>
   );
 }

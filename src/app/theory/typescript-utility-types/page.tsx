@@ -1,5 +1,5 @@
 import QuizPageShell from "@/components/QuizPageShell";
-import SiteHeader from "@/components/SiteHeader";
+import SitePageHeading from "@/components/SitePageHeading";
 import TheoryCollapsibleSections from "@/components/TheoryCollapsibleSections";
 import TheoryNavLink from "@/components/TheoryNavLink";
 import TheoryTopicBanner from "@/components/TheoryTopicBanner";
@@ -26,7 +26,7 @@ export default function TypeScriptUtilityTypesTheoryPage() {
   return (
     <QuizPageShell maxWidth="xl">
       <Stack spacing={3}>
-        <SiteHeader
+        <SitePageHeading
           title="Утилитарные типы TypeScript"
           subtitle="Встроенные преобразования типов: объекты, union и сигнатуры функций без ручного копирования полей."
         />

@@ -1,5 +1,5 @@
 import QuizPageShell from "@/components/QuizPageShell";
-import SiteHeader from "@/components/SiteHeader";
+import SitePageHeading from "@/components/SitePageHeading";
 import TheoryTopicBanner from "@/components/TheoryTopicBanner";
 import TheoryCollapsibleSections from "@/components/TheoryCollapsibleSections";
 import TheoryNavLink from "@/components/TheoryNavLink";
@@ -23,7 +23,7 @@ export default function WebSocketTheoryPage() {
   return (
     <QuizPageShell maxWidth="xl">
       <Stack spacing={3}>
-        <SiteHeader
+        <SitePageHeading
           title="WebSocket"
           subtitle="Полнодуплекс поверх TCP: HTTP Upgrade, фреймы и типичные сценарии использования."
         />

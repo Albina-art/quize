@@ -1,5 +1,5 @@
 import QuizPageShell from "@/components/QuizPageShell";
-import SiteHeader from "@/components/SiteHeader";
+import SitePageHeading from "@/components/SitePageHeading";
 import TheoryTopicBanner from "@/components/TheoryTopicBanner";
 import TheoryCollapsibleSections from "@/components/TheoryCollapsibleSections";
 import TheoryNavLink from "@/components/TheoryNavLink";
@@ -23,7 +23,7 @@ export default function CorsTheoryPage() {
   return (
     <QuizPageShell maxWidth="xl">
       <Stack spacing={3}>
-        <SiteHeader
+        <SitePageHeading
           title="CORS"
           subtitle="Как браузер разрешает скриптам с одного сайта обращаться к API на другом — и когда запрос блокируется."
         />

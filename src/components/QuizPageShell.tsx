@@ -17,7 +17,8 @@ export default function QuizPageShell({
         minHeight: "100vh",
         background: (t) =>
           `linear-gradient(165deg, ${t.palette.background.default} 0%, ${t.palette.background.paper} 44%, ${t.palette.background.default} 100%)`,
-        py: { xs: 2, sm: 4 },
+        pt: 0,
+        pb: { xs: 2, sm: 4 },
         px: { xs: 0, sm: 2 },
       }}
     >

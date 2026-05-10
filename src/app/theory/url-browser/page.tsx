@@ -1,5 +1,5 @@
 import QuizPageShell from "@/components/QuizPageShell";
-import SiteHeader from "@/components/SiteHeader";
+import SitePageHeading from "@/components/SitePageHeading";
 import TheoryTopicBanner from "@/components/TheoryTopicBanner";
 import TheoryCollapsibleSections from "@/components/TheoryCollapsibleSections";
 import TheoryNavLink from "@/components/TheoryNavLink";
@@ -25,7 +25,7 @@ export default function UrlBrowserTheoryPage() {
   return (
     <QuizPageShell>
       <Stack spacing={3}>
-        <SiteHeader
+        <SitePageHeading
           title="Что происходит при вводе URL"
           subtitle="От DNS и TCP до HTTPS, веб-сервера и отрисовки страницы."
         />

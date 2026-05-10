@@ -1,5 +1,5 @@
 import QuizPageShell from "@/components/QuizPageShell";
-import SiteHeader from "@/components/SiteHeader";
+import SitePageHeading from "@/components/SitePageHeading";
 import TheoryCollapsibleSections from "@/components/TheoryCollapsibleSections";
 import TheoryNavLink from "@/components/TheoryNavLink";
 import TheoryTopicBanner from "@/components/TheoryTopicBanner";
@@ -27,7 +27,7 @@ export default function ReactVirtualDomTheoryPage() {
   return (
     <QuizPageShell maxWidth="xl">
       <Stack spacing={3}>
-        <SiteHeader
+        <SitePageHeading
           title="Virtual DOM в React"
           subtitle="Как React описывает UI в памяти, сравнивает деревья и минимизирует правки реального DOM."
         />

@@ -2,7 +2,7 @@
 
 import MarkdownArticle from "@/components/MarkdownArticle";
 import QuizPageShell from "@/components/QuizPageShell";
-import SiteHeader from "@/components/SiteHeader";
+import SitePageHeading from "@/components/SitePageHeading";
 import { quizFetch } from "@/lib/quizFetch";
 import AddRoundedIcon from "@mui/icons-material/AddRounded";
 import DeleteOutlineRoundedIcon from "@mui/icons-material/DeleteOutlineRounded";
@@ -451,7 +451,7 @@ export default function NotesPage() {
   return (
     <QuizPageShell maxWidth="xl">
       <Stack spacing={2.5}>
-        <SiteHeader
+        <SitePageHeading
           title="Заметки"
           subtitle="Markdown в базе данных. Сохранение вручную кнопкой «Сохранить». Заметки доступны только в вашем аккаунте после входа."
         />
