@@ -53,6 +53,29 @@ const TOPIC_ICONS: Record<TopicVisualIcon, ComponentType<SvgIconProps>> = {
 
 const ICON_BOX = 56;
 
+/** Плейсхолдер под стрелку: тот же тип layout, что у IconButton на xs/sm, без MUI Button — стабильная гидратация. */
+function ScrollArrowPlaceholder({ side }: { side: "left" | "right" }) {
+  return (
+    <Box
+      aria-hidden
+      sx={{
+        flexShrink: 0,
+        alignSelf: "center",
+        width: 48,
+        height: 48,
+        boxSizing: "border-box",
+        border: "2px solid transparent",
+        visibility: "hidden",
+        pointerEvents: "none",
+        position: { xs: "absolute", sm: "relative" },
+        ...(side === "left"
+          ? { left: { xs: "5px", sm: "auto" } }
+          : { right: { xs: "5px", sm: "auto" } }),
+      }}
+    />
+  );
+}
+
 function TopicSlideIcon({
   id,
   selected,
@@ -146,8 +169,8 @@ export default function TopicChipFilter({
   const scrollRef = useRef<HTMLDivElement>(null);
   const [canScrollLeft, setCanScrollLeft] = useState(false);
   const [canScrollRight, setCanScrollRight] = useState(false);
-  /** До первого layout на клиенте не включаем стрелки — иначе рассинхрон с SSR и предупреждение гидратации */
-  const [scrollMetricsReady, setScrollMetricsReady] = useState(false);
+  /** Стрелки с IconButton только на клиенте после гидратации — иначе Emotion даёт разный className SSR/CSR */
+  const [clientArrowsMounted, setClientArrowsMounted] = useState(false);
 
   const updateScrollState = useCallback(() => {
     const el = scrollRef.current;
@@ -159,7 +182,7 @@ export default function TopicChipFilter({
   }, []);
 
   useLayoutEffect(() => {
-    setScrollMetricsReady(true);
+    setClientArrowsMounted(true);
     updateScrollState();
     const el = scrollRef.current;
     if (!el) return;
@@ -315,32 +338,36 @@ export default function TopicChipFilter({
           gap: { xs: 0.5, sm: 1 },
         }}
       >
-        <IconButton
-          aria-label="Прокрутить темы назад"
-          onClick={() => scrollByDir(-1)}
-          disableRipple
-          disabled={!loaded || !scrollMetricsReady || !canScrollLeft}
-          sx={{
-            alignSelf: "center",
-            flexShrink: 0,
-            color: "secondary.light",
-            bgcolor: { xs: "transparent", sm: (t) => alpha(t.palette.background.paper, 0.85) },
-            border: 2,
-            borderColor: { xs: "transparent", sm: (t) => alpha(t.palette.secondary.main, 0.35) },
-            transition: "transform 0.25s ease, box-shadow 0.25s ease, border-color 0.25s ease",
-            "&:hover:not(:disabled)": {
-              bgcolor: { xs: "transparent", sm: "action.hover" },
-              borderColor: { xs: "transparent", sm: "secondary.light" },
-              transform: "scale(1.06)",
-              boxShadow: { xs: "none", sm: (t) => `0 4px 18px ${alpha(t.palette.secondary.main, 0.28)}` },
-            },
-            position: { xs: "absolute", sm: "relative" },
-            left: { xs: "5px", sm: "auto" },
-            "&.Mui-disabled": { opacity: 0.35 },
-          }}
-        >
-          <ChevronLeftRoundedIcon />
-        </IconButton>
+        {clientArrowsMounted ? (
+          <IconButton
+            aria-label="Прокрутить темы назад"
+            onClick={() => scrollByDir(-1)}
+            disableRipple
+            disabled={!loaded || !canScrollLeft}
+            sx={{
+              alignSelf: "center",
+              flexShrink: 0,
+              color: "secondary.light",
+              bgcolor: { xs: "transparent", sm: (t) => alpha(t.palette.background.paper, 0.85) },
+              border: 2,
+              borderColor: { xs: "transparent", sm: (t) => alpha(t.palette.secondary.main, 0.35) },
+              transition: "transform 0.25s ease, box-shadow 0.25s ease, border-color 0.25s ease",
+              "&:hover:not(:disabled)": {
+                bgcolor: { xs: "transparent", sm: "action.hover" },
+                borderColor: { xs: "transparent", sm: "secondary.light" },
+                transform: "scale(1.06)",
+                boxShadow: { xs: "none", sm: (t) => `0 4px 18px ${alpha(t.palette.secondary.main, 0.28)}` },
+              },
+              position: { xs: "absolute", sm: "relative" },
+              left: { xs: "5px", sm: "auto" },
+              "&.Mui-disabled": { opacity: 0.35 },
+            }}
+          >
+            <ChevronLeftRoundedIcon />
+          </IconButton>
+        ) : (
+          <ScrollArrowPlaceholder side="left" />
+        )}
 
         <Box
           ref={scrollRef}
@@ -427,32 +454,36 @@ export default function TopicChipFilter({
           {topics.map((t) => topicSlide(t))}
         </Box>
 
-        <IconButton
-          aria-label="Прокрутить темы вперёд"
-          onClick={() => scrollByDir(1)}
-          disableRipple
-          disabled={!loaded || !scrollMetricsReady || !canScrollRight}
-          sx={{
-            alignSelf: "center",
-            flexShrink: 0,
-            color: "secondary.light",
-            bgcolor: { xs: "transparent", sm: (t) => alpha(t.palette.background.paper, 0.85) },
-            border: 2,
-            borderColor: { xs: "transparent", sm: (t) => alpha(t.palette.secondary.main, 0.35) },
-            transition: "transform 0.25s ease, box-shadow 0.25s ease, border-color 0.25s ease",
-            "&:hover:not(:disabled)": {
-              bgcolor: { xs: "transparent", sm: "action.hover" },
-              borderColor: { xs: "transparent", sm: "secondary.light" },
-              transform: "scale(1.06)",
-              boxShadow: { xs: "none", sm: (t) => `0 4px 18px ${alpha(t.palette.secondary.main, 0.28)}` },
-            },
-            position: { xs: "absolute", sm: "relative" },
-            right: { xs: "5px", sm: "auto" },
-            "&.Mui-disabled": { opacity: 0.35 },
-          }}
-        >
-          <ChevronRightRoundedIcon />
-        </IconButton>
+        {clientArrowsMounted ? (
+          <IconButton
+            aria-label="Прокрутить темы вперёд"
+            onClick={() => scrollByDir(1)}
+            disableRipple
+            disabled={!loaded || !canScrollRight}
+            sx={{
+              alignSelf: "center",
+              flexShrink: 0,
+              color: "secondary.light",
+              bgcolor: { xs: "transparent", sm: (t) => alpha(t.palette.background.paper, 0.85) },
+              border: 2,
+              borderColor: { xs: "transparent", sm: (t) => alpha(t.palette.secondary.main, 0.35) },
+              transition: "transform 0.25s ease, box-shadow 0.25s ease, border-color 0.25s ease",
+              "&:hover:not(:disabled)": {
+                bgcolor: { xs: "transparent", sm: "action.hover" },
+                borderColor: { xs: "transparent", sm: "secondary.light" },
+                transform: "scale(1.06)",
+                boxShadow: { xs: "none", sm: (t) => `0 4px 18px ${alpha(t.palette.secondary.main, 0.28)}` },
+              },
+              position: { xs: "absolute", sm: "relative" },
+              right: { xs: "5px", sm: "auto" },
+              "&.Mui-disabled": { opacity: 0.35 },
+            }}
+          >
+            <ChevronRightRoundedIcon />
+          </IconButton>
+        ) : (
+          <ScrollArrowPlaceholder side="right" />
+        )}
       </Box>
     </Box>
   );
