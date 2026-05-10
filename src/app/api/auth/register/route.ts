@@ -6,6 +6,7 @@ import {
   SESSION_COOKIE,
   signSessionToken,
 } from "@/lib/auth/session";
+import { prismaClientErrorMessage } from "@/lib/prismaHttpError";
 import { prisma } from "@/lib/prisma";
 
 function normalizeEmail(email: string): string {
@@ -76,9 +77,10 @@ export async function POST(request: Request) {
       process.env.NODE_ENV !== "production"
         ? " Смотрите лог терминала где запущен next dev — там будет текст ошибки."
         : "";
-    return NextResponse.json(
-      { error: `Не удалось зарегистрироваться.${hint}` },
-      { status: 500 },
+    const message = prismaClientErrorMessage(
+      `Не удалось зарегистрироваться.${hint}`,
+      e,
     );
+    return NextResponse.json({ error: message }, { status: 500 });
   }
 }
