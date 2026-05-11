@@ -36,6 +36,13 @@ export const theoryTopics: TheoryTopic[] = [
     mcqTopic: "CORS",
   },
   {
+    slug: "jwt",
+    title: "JWT, Bearer и токены доступа",
+    description:
+      "Структура JWT, access и refresh, отличие Bearer от формата токена, сравнение с сессиями, OAuth и практика безопасности.",
+    illustration: "/theory/jwt-cover.png",
+  },
+  {
     slug: "websocket",
     title: "WebSocket",
     description:
