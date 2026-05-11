@@ -179,6 +179,14 @@ export function createAppTheme() {
           variant: "outlined",
           fullWidth: true,
         },
+        styleOverrides: {
+          root: {
+            borderColor: "divider",
+            "& .MuiFormLabel-root": {
+              fontSize: "1.125rem",
+            },
+          },
+        },
       },
       MuiSelect: {
         defaultProps: {

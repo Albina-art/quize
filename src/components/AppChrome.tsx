@@ -4,15 +4,11 @@ import SiteNavShell from "@/components/SiteNavShell";
 import Box from "@mui/material/Box";
 import Container from "@mui/material/Container";
 import type { ReactNode } from "react";
-import { usePathname } from "next/navigation";
 
 /** Общая шапка с навигацией: живёт в корневом layout, не пересоздаётся при смене маршрута. */
 export default function AppChrome({
   children,
 }: Readonly<{ children: ReactNode }>) {
-  const pathname = usePathname();
-  const navMaxWidth = pathname.startsWith("/theory") ? "xl" : "lg";
-
   return (
     <>
       <Box
@@ -22,7 +18,7 @@ export default function AppChrome({
           pb: { xs: 2, sm: 2 },
         }}
       >
-        <Container maxWidth={navMaxWidth}>
+        <Container maxWidth="lg">
           <SiteNavShell />
         </Container>
       </Box>

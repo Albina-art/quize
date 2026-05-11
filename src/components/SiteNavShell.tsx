@@ -41,7 +41,6 @@ export default function SiteNavShell() {
           },
           gap: 1,
           width: "100%",
-          maxWidth: 960,
           marginBottom: "20px !important",
         }}
       >

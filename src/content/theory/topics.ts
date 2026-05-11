@@ -89,6 +89,13 @@ export const theoryTopics: TheoryTopic[] = [
     trainerTopic: "React: виртуальный DOM",
   },
   {
+    slug: "rendering",
+    title: "Рендеринг в браузере и React",
+    description:
+      "Critical Rendering Path (DOM, CSSOM, layout, paint, composite), фазы Fiber — триггер, рендер и коммит, хуки и DOMContentLoaded.",
+    illustration: "/theory/rendering-cover.png",
+  },
+  {
     slug: "javascript-closures",
     title: "Замыкания в JavaScript",
     description:
