@@ -1,6 +1,6 @@
 "use client";
 
-import { useCallback, useState, type MouseEvent } from "react";
+import { useCallback, useState, type MouseEvent, type KeyboardEvent } from "react";
 import MarkdownArticle from "@/components/MarkdownArticle";
 import type { TheorySection } from "@/content/theory/theorySectionTypes";
 import CheckRoundedIcon from "@mui/icons-material/CheckRounded";
@@ -31,25 +31,44 @@ function CopyTextButton({
 }>) {
   const [copied, setCopied] = useState(false);
 
+  const copy = useCallback(async () => {
+    try {
+      await navigator.clipboard.writeText(text);
+      setCopied(true);
+      window.setTimeout(() => setCopied(false), COPIED_FEEDBACK_MS);
+    } catch {
+      setCopied(false);
+    }
+  }, [text]);
+
   const handleCopy = useCallback(
-    async (e: MouseEvent<HTMLButtonElement>) => {
+    async (e: MouseEvent<HTMLElement>) => {
       e.stopPropagation();
-      try {
-        await navigator.clipboard.writeText(text);
-        setCopied(true);
-        window.setTimeout(() => setCopied(false), COPIED_FEEDBACK_MS);
-      } catch {
-        setCopied(false);
-      }
+      await copy();
     },
-    [text],
+    [copy],
+  );
+
+  const handleKeyDown = useCallback(
+    (e: KeyboardEvent<HTMLElement>) => {
+      if (e.key !== "Enter" && e.key !== " ") return;
+      e.preventDefault();
+      e.stopPropagation();
+      void copy();
+    },
+    [copy],
   );
 
   return (
     <Tooltip title={copied ? "Скопировано" : label}>
       <IconButton
+        component="span"
+        role="button"
+        tabIndex={0}
         size="small"
         onClick={handleCopy}
+        onKeyDown={handleKeyDown}
+        onMouseDown={(e) => e.stopPropagation()}
         aria-label={label}
         sx={{
           flexShrink: 0,
@@ -110,7 +129,7 @@ export default function TheoryCollapsibleSections({ introMarkdown, sections }: P
                 pr: 1,
               }}
             >
-              <Typography component="span" variant="subtitle1" sx={{ fontWeight: 600, flex: 1, minWidth: 0 }}>
+              <Typography component="span" variant="subtitle1" sx={{ fontWeight: 600, flex: 1, minWidth: 0, maxWidth: "max-content", marginRight: 2 }}>
                 {section.title}
               </Typography>
               <CopyTextButton text={section.title} label="Скопировать заголовок" />

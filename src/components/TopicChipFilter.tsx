@@ -167,10 +167,39 @@ export default function TopicChipFilter({
 }: TopicChipFilterProps) {
   const isAll = value === allValue;
   const scrollRef = useRef<HTMLDivElement>(null);
+  const slideRefs = useRef<Map<string, HTMLButtonElement>>(new Map());
+  const initialScrollDoneRef = useRef(false);
   const [canScrollLeft, setCanScrollLeft] = useState(false);
   const [canScrollRight, setCanScrollRight] = useState(false);
   /** Стрелки с IconButton только на клиенте после гидратации — иначе Emotion даёт разный className SSR/CSR */
   const [clientArrowsMounted, setClientArrowsMounted] = useState(false);
+
+  const setSlideRef = useCallback((key: string) => {
+    return (el: HTMLButtonElement | null) => {
+      if (el) slideRefs.current.set(key, el);
+      else slideRefs.current.delete(key);
+    };
+  }, []);
+
+  const scrollSelectedIntoView = useCallback(
+    (behavior: ScrollBehavior = "smooth") => {
+      const container = scrollRef.current;
+      if (!container || !loaded) return;
+
+      const targetKey = isAll ? allValue : value;
+      const slide = slideRefs.current.get(targetKey);
+      if (!slide) return;
+
+      const idealLeft =
+        slide.offsetLeft - (container.clientWidth - slide.offsetWidth) / 2;
+      const maxLeft = container.scrollWidth - container.clientWidth;
+      container.scrollTo({
+        left: Math.max(0, Math.min(idealLeft, maxLeft)),
+        behavior,
+      });
+    },
+    [allValue, isAll, loaded, value],
+  );
 
   const updateScrollState = useCallback(() => {
     const el = scrollRef.current;
@@ -196,6 +225,17 @@ export default function TopicChipFilter({
       window.removeEventListener("resize", updateScrollState);
     };
   }, [topics, loaded, updateScrollState]);
+
+  useLayoutEffect(() => {
+    if (!loaded) return;
+    const behavior: ScrollBehavior = initialScrollDoneRef.current ? "smooth" : "auto";
+    const id = requestAnimationFrame(() => {
+      scrollSelectedIntoView(behavior);
+      updateScrollState();
+      initialScrollDoneRef.current = true;
+    });
+    return () => cancelAnimationFrame(id);
+  }, [loaded, value, topics, scrollSelectedIntoView, updateScrollState]);
 
   const scrollByDir = (dir: -1 | 1) => {
     const el = scrollRef.current;
@@ -272,6 +312,7 @@ export default function TopicChipFilter({
     return (
       <Button
         key={t}
+        ref={setSlideRef(t)}
         disabled={!loaded}
         onClick={() => onTopicChange(t)}
         variant={selected ? "contained" : "outlined"}
@@ -322,14 +363,6 @@ export default function TopicChipFilter({
 
   return (
     <Box>
-      <Typography
-        variant="caption"
-        color="text.secondary"
-        sx={{ display: "block", mb: 1.75, fontWeight: 600, letterSpacing: "0.02em" }}
-      >
-        Быстрый выбор темы
-      </Typography>
-
       <Box
         sx={{
           position: "relative",
@@ -399,6 +432,7 @@ export default function TopicChipFilter({
           }}
         >
           <Button
+            ref={setSlideRef(allValue)}
             disabled={!loaded}
             onClick={() => onTopicChange(allValue)}
             variant={isAll ? "contained" : "outlined"}

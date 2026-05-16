@@ -1,5 +1,6 @@
 import QuizPageShell from "@/components/QuizPageShell";
 import SitePageHeading from "@/components/SitePageHeading";
+import TheoryPracticeLinks from "@/components/TheoryPracticeLinks";
 import TheoryTopicBanner from "@/components/TheoryTopicBanner";
 import TheoryCollapsibleSections from "@/components/TheoryCollapsibleSections";
 import { jwtTheoryIntro, jwtTheorySections } from "@/content/theory/jwtTheorySections";
@@ -24,6 +25,8 @@ export default function JwtTheoryPage() {
         />
 
         <TheoryTopicBanner slug="jwt" />
+
+        <TheoryPracticeLinks slug="jwt" />
 
         <Card elevation={0}>
           <CardContent sx={{ p: { xs: 1.25, sm: 2 } }}>

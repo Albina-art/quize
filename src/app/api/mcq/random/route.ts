@@ -1,5 +1,11 @@
 import { NextResponse } from "next/server";
+import { requireUser } from "@/lib/auth/requireUser";
 import { prisma } from "@/lib/prisma";
+import {
+  buildTopicQuestionPool,
+  pickRandomId,
+  TOPIC_ALL_ANSWERED_MESSAGE,
+} from "@/lib/topicQuestionPool";
 
 function shuffle<T>(items: T[]): T[] {
   const a = [...items];
@@ -18,6 +24,7 @@ export async function GET(request: Request) {
     const topicRaw = searchParams.get("topic");
     const topic =
       topicRaw !== null && topicRaw.trim() !== "" ? topicRaw.trim() : undefined;
+    const retake = searchParams.get("retake") === "1";
 
     const where = topic ? { topic } : {};
 
@@ -30,12 +37,61 @@ export async function GET(request: Request) {
       return NextResponse.json({ error: emptyMessage }, { status: 404 });
     }
 
-    const randomIndex = Math.floor(Math.random() * total);
-    const [item] = await prisma.mcqQuestion.findMany({
-      where,
-      skip: randomIndex,
-      take: 1,
-      orderBy: { id: "asc" },
+    let questionId: number | null = null;
+
+    if (topic) {
+      const auth = await requireUser(request);
+      if (!auth.ok) return auth.response;
+
+      const rows = await prisma.mcqQuestion.findMany({
+        where: { topic },
+        select: { id: true },
+      });
+      const allIds = rows.map((r) => r.id);
+
+      const progressRows = await prisma.mcqQuestionProgress.findMany({
+        where: { userId: auth.userId, questionId: { in: allIds } },
+        select: { questionId: true, lastCorrect: true },
+      });
+
+      if (retake) {
+        questionId = pickRandomId(allIds);
+      } else {
+        const poolResult = buildTopicQuestionPool(
+          allIds,
+          progressRows.map((p) => ({ questionId: p.questionId, success: p.lastCorrect })),
+        );
+
+        if ("allAnswered" in poolResult) {
+          return NextResponse.json(
+            { error: TOPIC_ALL_ANSWERED_MESSAGE, code: "TOPIC_ALL_ANSWERED" },
+            { status: 404 },
+          );
+        }
+
+        questionId = pickRandomId(poolResult.pool);
+      }
+    } else {
+      const randomIndex = Math.floor(Math.random() * total);
+      const [row] = await prisma.mcqQuestion.findMany({
+        where,
+        skip: randomIndex,
+        take: 1,
+        orderBy: { id: "asc" },
+        select: { id: true },
+      });
+      questionId = row?.id ?? null;
+    }
+
+    if (questionId === null) {
+      return NextResponse.json(
+        { error: "Не удалось получить вопрос." },
+        { status: 500 },
+      );
+    }
+
+    const item = await prisma.mcqQuestion.findFirst({
+      where: { id: questionId },
       include: {
         options: {
           orderBy: { sortOrder: "asc" },

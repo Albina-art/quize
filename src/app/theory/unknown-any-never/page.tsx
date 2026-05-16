@@ -2,16 +2,14 @@ import QuizPageShell from "@/components/QuizPageShell";
 import SitePageHeading from "@/components/SitePageHeading";
 import TheoryTopicBanner from "@/components/TheoryTopicBanner";
 import TheoryCollapsibleSections from "@/components/TheoryCollapsibleSections";
-import TheoryNavLink from "@/components/TheoryNavLink";
+import TheoryPracticeLinks from "@/components/TheoryPracticeLinks";
 import {
   unknownAnyNeverTheoryIntro,
   unknownAnyNeverTheorySections,
 } from "@/content/theory/unknownAnyNeverTheorySections";
-import { mcqUrlForTheorySlug } from "@/content/theory/topics";
 import Card from "@mui/material/Card";
 import CardContent from "@mui/material/CardContent";
 import Stack from "@mui/material/Stack";
-import Typography from "@mui/material/Typography";
 import type { Metadata } from "next";
 
 export const metadata: Metadata = {
@@ -19,8 +17,6 @@ export const metadata: Metadata = {
   description:
     "Разница между any, unknown и never в TypeScript: безопасность, сужение типов и исчерпывающие проверки",
 };
-
-const mcqTestHref = mcqUrlForTheorySlug("unknown-any-never");
 
 export default function UnknownAnyNeverTheoryPage() {
   return (
@@ -33,17 +29,7 @@ export default function UnknownAnyNeverTheoryPage() {
 
         <TheoryTopicBanner slug="unknown-any-never" />
 
-        {mcqTestHref ? (
-          <Typography variant="body1">
-            <TheoryNavLink
-              href={mcqTestHref}
-              underline="hover"
-              sx={{ fontWeight: 500, fontSize: "1.25rem" }}
-            >
-              Тест с вариантами по этой теме
-            </TheoryNavLink>
-          </Typography>
-        ) : null}
+        <TheoryPracticeLinks slug="unknown-any-never" />
 
         <Card elevation={0}>
           <CardContent sx={{ p: { xs: 1.25, sm: 2 } }}>

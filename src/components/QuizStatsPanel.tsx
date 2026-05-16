@@ -1,5 +1,6 @@
 "use client";
 
+import { quizFetch } from "@/lib/quizFetch";
 import {
   emptyStats,
   totalFail,
@@ -7,14 +8,12 @@ import {
   totalSuccess,
   type QuizStats,
 } from "@/lib/quizStats";
-import { quizFetch } from "@/lib/quizFetch";
 import EmojiEventsRoundedIcon from "@mui/icons-material/EmojiEventsRounded";
 import ThumbDownAltOutlinedIcon from "@mui/icons-material/ThumbDownAltOutlined";
 import ThumbUpAltOutlinedIcon from "@mui/icons-material/ThumbUpAltOutlined";
 import Box from "@mui/material/Box";
 import Paper from "@mui/material/Paper";
 import Typography from "@mui/material/Typography";
-import { alpha } from "@mui/material/styles";
 import { useCallback, useEffect, useState } from "react";
 
 export default function QuizStatsPanel() {
@@ -62,11 +61,6 @@ export default function QuizStatsPanel() {
         px: { xs: 2, sm: 2.5 },
         py: 1.75,
         borderRadius: 2,
-        border: 1,
-        borderColor: "divider",
-        bgcolor: (t) => alpha(t.palette.secondary.main, 0.08),
-        backgroundImage: (t) =>
-          `linear-gradient(135deg, ${alpha(t.palette.secondary.dark, 0.35)} 0%, ${alpha(t.palette.background.paper, 0.5)} 100%)`,
       }}
     >
       <Box

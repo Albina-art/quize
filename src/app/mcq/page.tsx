@@ -2,6 +2,8 @@
 
 import QuizPageShell from "@/components/QuizPageShell";
 import SitePageHeading from "@/components/SitePageHeading";
+import QuestionTopicChip from "@/components/QuestionTopicChip";
+import TopicAllAnsweredNotice from "@/components/TopicAllAnsweredNotice";
 import TopicChipFilter from "@/components/TopicChipFilter";
 import CasinoRoundedIcon from "@mui/icons-material/CasinoRounded";
 import CancelRoundedIcon from "@mui/icons-material/CancelRounded";
@@ -72,6 +74,8 @@ function McqPageInner() {
   const [topicFilter, setTopicFilter] = useState<string>(ALL_TOPICS_VALUE);
   const [questionModalOpen, setQuestionModalOpen] = useState(false);
   const [questionLoading, setQuestionLoading] = useState(false);
+  const [modalNotice, setModalNotice] = useState<string | null>(null);
+  const [topicRetakeMode, setTopicRetakeMode] = useState(false);
   const questionLoadAbortRef = useRef<AbortController | null>(null);
   const [topicProgressMap, setTopicProgressMap] = useState<
     Record<string, { ok: number; bad: number }>
@@ -79,7 +83,6 @@ function McqPageInner() {
   const [mcqByQuestionId, setMcqByQuestionId] = useState<
     Record<number, "ok" | "bad">
   >({});
-
   const refreshMcqProgress = useCallback(async () => {
     const res = await quizFetch("/api/mcq/progress");
     if (!res.ok) return;
@@ -166,6 +169,8 @@ function McqPageInner() {
     setShowHint(false);
     setVerified(null);
     setMessage("");
+    setModalNotice(null);
+    setTopicRetakeMode(false);
   }, []);
 
   const closeQuestionModal = useCallback(() => {
@@ -177,9 +182,11 @@ function McqPageInner() {
     setSelectedId("");
     setShowHint(false);
     setVerified(null);
+    setModalNotice(null);
+    setTopicRetakeMode(false);
   }, []);
 
-  const loadQuestion = useCallback(async () => {
+  const loadQuestion = useCallback(async (options?: { retake?: boolean }) => {
     questionLoadAbortRef.current?.abort();
     const ac = new AbortController();
     questionLoadAbortRef.current = ac;
@@ -189,10 +196,14 @@ function McqPageInner() {
     setVerified(null);
     setSelectedId("");
     setCurrent(null);
-    const qs =
-      topicFilter === ALL_TOPICS_VALUE
-        ? ""
-        : `?topic=${encodeURIComponent(topicFilter)}`;
+    setModalNotice(null);
+    const useRetake = options?.retake ?? topicRetakeMode;
+    const params = new URLSearchParams();
+    if (topicFilter !== ALL_TOPICS_VALUE) {
+      params.set("topic", topicFilter);
+      if (useRetake) params.set("retake", "1");
+    }
+    const qs = params.toString() ? `?${params.toString()}` : "";
     let response: Response;
     try {
       response = await quizFetch(`/api/mcq/random${qs}`, { signal: ac.signal });
@@ -205,23 +216,39 @@ function McqPageInner() {
       setMessage("Не удалось загрузить вопрос.");
       return;
     }
-    const data = (await response.json()) as McqPayload & { error?: string };
+    const data = (await response.json()) as McqPayload & {
+      error?: string;
+      code?: string;
+    };
 
     if (ac.signal.aborted) return;
 
     if (!response.ok) {
       setQuestionLoading(false);
+      if (data.code === "TOPIC_ALL_ANSWERED") {
+        setCurrent(null);
+        setModalNotice("topic_all_answered");
+        return;
+      }
       setQuestionModalOpen(false);
       setCurrent(null);
+      setModalNotice(null);
       setMessageSeverity("error");
       setMessage(data.error ?? "Ошибка при загрузке вопроса.");
       return;
     }
 
     setMessage("");
+    setModalNotice(null);
     setCurrent(data);
     setQuestionLoading(false);
-  }, [topicFilter]);
+  }, [topicFilter, topicRetakeMode]);
+
+  const retakeCurrentTopic = useCallback(() => {
+    if (topicFilter === ALL_TOPICS_VALUE) return;
+    setTopicRetakeMode(true);
+    void loadQuestion({ retake: true });
+  }, [topicFilter, loadQuestion]);
 
   const handleVerify = useCallback(async () => {
     if (!current || !selectedId) return;
@@ -331,7 +358,7 @@ function McqPageInner() {
           flexDirection: "column",
         }}
       >
-        {questionLoading || !current ? (
+        {questionLoading ? (
           <Stack
             spacing={2}
             sx={{
@@ -347,7 +374,18 @@ function McqPageInner() {
               Загружаем вопрос…
             </Typography>
           </Stack>
-        ) : (
+        ) : modalNotice ? (
+          <TopicAllAnsweredNotice
+            currentTopic={topicFilter}
+            topics={topics}
+            allTopicsValue={ALL_TOPICS_VALUE}
+            onRetake={retakeCurrentTopic}
+            onSelectTopic={(t) => {
+              closeQuestionModal();
+              applyTopic(t);
+            }}
+          />
+        ) : current ? (
           <Stack spacing={2.5} sx={{ maxWidth: 1000, mx: "auto", width: "100%" }}>
             <Box
               sx={{
@@ -364,13 +402,7 @@ function McqPageInner() {
               >
                 Тема:
               </Typography>
-              <Chip
-                label={current.topic}
-                size="medium"
-                color="primary"
-                variant="outlined"
-                sx={{ margin: "0 !important" }}
-              />
+              <QuestionTopicChip topic={current.topic} />
               {verified ? (
                 <Chip
                   size="medium"
@@ -383,7 +415,7 @@ function McqPageInner() {
                       <CancelRoundedIcon />
                     )
                   }
-                  label={verified.correct ? "Сейчас: верно" : "Сейчас: неверно"}
+                  label={verified.correct ? "Верно" : "Неверно"}
                 />
               ) : mcqByQuestionId[current.id] ? (
                 <Chip
@@ -538,19 +570,17 @@ function McqPageInner() {
               </RadioGroup>
             </FormControl>
 
-            {verified ? (
+            {verified?.correct &&(
               <Alert
-                severity={verified.correct ? "success" : "warning"}
+                severity={ "success" }
                 variant="outlined"
                 sx={{ borderRadius: 2 }}
               >
-                {verified.correct
-                  ? "Верно."
-                  : "Неверно — верный вариант подсвечен зелёным."}
+                Верно
               </Alert>
-            ) : null}
+            )}
           </Stack>
-        )}
+        ) : null}
       </DialogContent>
 
       <Box
@@ -618,7 +648,7 @@ function McqPageInner() {
                 size="large"
                 aria-label="Проверить ответ"
                 disabled={
-                  questionLoading || !current || !selectedId || verified !== null
+                  questionLoading || modalNotice !== null || !current || !selectedId || verified !== null
                 }
                 startIcon={<FactCheckRoundedIcon />}
                 onClick={handleVerify}
@@ -653,7 +683,7 @@ function McqPageInner() {
                 color="secondary"
                 size="large"
                 aria-label="Следующий вопрос"
-                disabled={questionLoading || !current}
+                disabled={questionLoading || modalNotice !== null || !current}
                 startIcon={<NavigateNextRoundedIcon />}
                 onClick={() => loadQuestion()}
                 sx={{
@@ -682,7 +712,6 @@ function McqPageInner() {
       <Stack spacing={3}>
         <SitePageHeading
           title="Тест: варианты ответов"
-          subtitle="Выберите один вариант и проверьте себя. Ответ хранится на сервере — подсказки ключа нет."
         />
 
         {message ? (
@@ -695,13 +724,6 @@ function McqPageInner() {
 
         <Card elevation={0}>
           <CardContent sx={{ p: { xs: 2, sm: 3 } }}>
-            <Typography variant="h6" sx={{ mb: 1 }}>
-              Вопрос с вариантами
-            </Typography>
-            <Typography variant="body1" color="text.secondary" sx={{ mb: 2 }}>
-              Случайный вопрос из базы тестов. Тему можно выбрать кнопками или в списке.
-            </Typography>
-
             <Stack spacing={2} sx={{ mb: 2 }}>
               <TopicChipFilter
                 topics={topics}
@@ -738,14 +760,10 @@ function McqPageInner() {
               color="secondary"
               size="large"
               startIcon={<CasinoRoundedIcon />}
-              onClick={loadQuestion}
+              onClick={() => void loadQuestion()}
             >
               Вопрос
             </Button>
-
-            <Typography variant="body1" color="text.secondary" sx={{ mt: 2 }}>
-              Нажмите «Вопрос», чтобы открыть тест на весь экран.
-            </Typography>
           </CardContent>
         </Card>
       </Stack>

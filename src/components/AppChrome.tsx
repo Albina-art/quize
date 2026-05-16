@@ -13,9 +13,9 @@ export default function AppChrome({
     <>
       <Box
         sx={{
-          pt: { xs: 2, sm: 4 },
-          px: { xs: 0, sm: 2 },
-          pb: { xs: 2, sm: 2 },
+          pt: { xs: 0, sm: 2 },
+          px: { xs: 2, sm: 2 },
+          pb: 0,
         }}
       >
         <Container maxWidth="lg">

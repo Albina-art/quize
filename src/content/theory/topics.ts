@@ -115,7 +115,17 @@ export function mcqUrlForTheorySlug(slug: string): string | null {
 
 /** Ссылка на главную с фильтром темы тренажёра (или null). */
 export function trainerUrlForTheorySlug(slug: string): string | null {
-  const topic = theoryTopics.find((t) => t.slug === slug)?.trainerTopic;
+  const entry = theoryTopics.find((t) => t.slug === slug);
+  if (!entry) return null;
+  const topic = entry.trainerTopic ?? entry.mcqTopic;
   if (!topic) return null;
   return `/?topic=${encodeURIComponent(topic)}`;
+}
+
+/** Ссылка на конспект по теме из БД (MCQ или тренажёр), если есть в theoryTopics. */
+export function theoryUrlForQuestionTopic(topic: string): string | null {
+  const hit = theoryTopics.find(
+    (t) => t.mcqTopic === topic || t.trainerTopic === topic,
+  );
+  return hit ? `/theory/${hit.slug}` : null;
 }

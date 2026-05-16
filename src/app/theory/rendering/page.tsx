@@ -1,5 +1,6 @@
 import QuizPageShell from "@/components/QuizPageShell";
 import SitePageHeading from "@/components/SitePageHeading";
+import TheoryPracticeLinks from "@/components/TheoryPracticeLinks";
 import TheoryTopicBanner from "@/components/TheoryTopicBanner";
 import TheoryCollapsibleSections from "@/components/TheoryCollapsibleSections";
 import {
@@ -27,6 +28,8 @@ export default function RenderingTheoryPage() {
         />
 
         <TheoryTopicBanner slug="rendering" />
+
+        <TheoryPracticeLinks slug="rendering" />
 
         <Card elevation={0}>
           <CardContent sx={{ p: { xs: 1.25, sm: 2 } }}>

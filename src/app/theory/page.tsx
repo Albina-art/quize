@@ -149,20 +149,7 @@ export default function TheoryIndexPage() {
                   >
                     Читать конспект
                   </Button>
-                  {trainerHref ? (
-                    <Button
-                      component={Link}
-                      href={trainerHref}
-                      variant="outlined"
-                      color="inherit"
-                      size="medium"
-                      startIcon={<FitnessCenterRoundedIcon />}
-                      sx={{ justifyContent: "center", textTransform: "none", fontWeight: 600 }}
-                    >
-                      Тренировка по теме
-                    </Button>
-                  ) : null}
-                  {mcqHref ? (
+                  {mcqHref && (
                     <Button
                       component={Link}
                       href={mcqHref}
@@ -174,7 +161,20 @@ export default function TheoryIndexPage() {
                     >
                       Тест по теме
                     </Button>
-                  ) : null}
+                  )}
+                  {trainerHref && (
+                    <Button
+                      component={Link}
+                      href={trainerHref}
+                      variant="outlined"
+                      color="inherit"
+                      size="medium"
+                      startIcon={<FitnessCenterRoundedIcon />}
+                      sx={{ justifyContent: "center", textTransform: "none", fontWeight: 600 }}
+                    >
+                      Тренировка по теме
+                    </Button>
+                  )}
                 </Box>
               </Card>
             );

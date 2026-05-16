@@ -3,6 +3,8 @@
 import QuizPageShell from "@/components/QuizPageShell";
 import QuizStatsPanel from "@/components/QuizStatsPanel";
 import SitePageHeading from "@/components/SitePageHeading";
+import QuestionTopicChip from "@/components/QuestionTopicChip";
+import TopicAllAnsweredNotice from "@/components/TopicAllAnsweredNotice";
 import TopicChipFilter from "@/components/TopicChipFilter";
 import { quizFetch } from "@/lib/quizFetch";
 import { recordTrainerSelfGradeSynced } from "@/lib/quizStats";
@@ -60,6 +62,8 @@ export default function Home() {
   const [trainerGrade, setTrainerGrade] = useState<"know" | "miss" | null>(null);
   const [questionModalOpen, setQuestionModalOpen] = useState(false);
   const [questionLoading, setQuestionLoading] = useState(false);
+  const [modalNotice, setModalNotice] = useState<string | null>(null);
+  const [topicRetakeMode, setTopicRetakeMode] = useState(false);
   const questionLoadAbortRef = useRef<AbortController | null>(null);
   const [topicProgressMap, setTopicProgressMap] = useState<
     Record<string, { ok: number; bad: number }>
@@ -67,7 +71,6 @@ export default function Home() {
   const [trainerByQuestionId, setTrainerByQuestionId] = useState<
     Record<number, "ok" | "bad">
   >({});
-
   const refreshTrainerProgress = useCallback(async () => {
     const res = await quizFetch("/api/questions/progress");
     if (!res.ok) return;
@@ -140,6 +143,8 @@ export default function Home() {
     setShowAnswer(false);
     setTrainerGrade(null);
     setMessage("");
+    setModalNotice(null);
+    setTopicRetakeMode(false);
   }, []);
 
   const appliedTopicFromUrlRef = useRef(false);
@@ -163,9 +168,11 @@ export default function Home() {
     setShowHint(false);
     setShowAnswer(false);
     setTrainerGrade(null);
+    setModalNotice(null);
+    setTopicRetakeMode(false);
   }, []);
 
-  const getRandomQuestion = useCallback(async () => {
+  const getRandomQuestion = useCallback(async (options?: { retake?: boolean }) => {
     questionLoadAbortRef.current?.abort();
     const ac = new AbortController();
     questionLoadAbortRef.current = ac;
@@ -174,10 +181,14 @@ export default function Home() {
     setShowHint(false);
     setShowAnswer(false);
     setCurrent(null);
-    const qs =
-      topicFilter === ALL_TOPICS_VALUE
-        ? ""
-        : `?topic=${encodeURIComponent(topicFilter)}`;
+    setModalNotice(null);
+    const useRetake = options?.retake ?? topicRetakeMode;
+    const params = new URLSearchParams();
+    if (topicFilter !== ALL_TOPICS_VALUE) {
+      params.set("topic", topicFilter);
+      if (useRetake) params.set("retake", "1");
+    }
+    const qs = params.toString() ? `?${params.toString()}` : "";
     let response: Response;
     try {
       response = await quizFetch(`/api/questions/random${qs}`, { signal: ac.signal });
@@ -186,27 +197,41 @@ export default function Home() {
       setQuestionLoading(false);
       setQuestionModalOpen(false);
       setCurrent(null);
+      setModalNotice(null);
       setMessageSeverity("error");
       setMessage("Не удалось загрузить вопрос.");
       return;
     }
-    const data = (await response.json()) as Question & { error?: string };
+    const data = (await response.json()) as Question & { error?: string; code?: string };
 
     if (ac.signal.aborted) return;
 
     if (!response.ok) {
       setQuestionLoading(false);
+      if (data.code === "TOPIC_ALL_ANSWERED") {
+        setCurrent(null);
+        setModalNotice(data.error ?? "topic_all_answered");
+        return;
+      }
       setQuestionModalOpen(false);
       setCurrent(null);
+      setModalNotice(null);
       setMessageSeverity("error");
       setMessage(data.error ?? "Ошибка при получении вопроса.");
       return;
     }
 
     setMessage("");
+    setModalNotice(null);
     setCurrent(data);
     setQuestionLoading(false);
-  }, [topicFilter]);
+  }, [topicFilter, topicRetakeMode]);
+
+  const retakeCurrentTopic = useCallback(() => {
+    if (topicFilter === ALL_TOPICS_VALUE) return;
+    setTopicRetakeMode(true);
+    void getRandomQuestion({ retake: true });
+  }, [topicFilter, getRandomQuestion]);
 
   const trainerQuestionModal = (
     <Dialog
@@ -263,7 +288,7 @@ export default function Home() {
           flexDirection: "column",
         }}
       >
-        {questionLoading || !current ? (
+        {questionLoading ? (
           <Stack
             spacing={2}
             sx={{
@@ -279,7 +304,18 @@ export default function Home() {
               Загружаем вопрос…
             </Typography>
           </Stack>
-        ) : (
+        ) : modalNotice ? (
+          <TopicAllAnsweredNotice
+            currentTopic={topicFilter}
+            topics={topics}
+            allTopicsValue={ALL_TOPICS_VALUE}
+            onRetake={retakeCurrentTopic}
+            onSelectTopic={(t) => {
+              closeQuestionModal();
+              applyTopic(t);
+            }}
+          />
+        ) : current ? (
           <Stack spacing={2.5} sx={{ maxWidth: 1000, mx: "auto", width: "100%" }}>
             <Stack
               spacing={1.5}
@@ -293,13 +329,7 @@ export default function Home() {
               <Typography variant="caption" color="text.secondary" sx={{ fontWeight: 500 }}>
                 Тема:
               </Typography>
-              <Chip
-                label={current.topic}
-                size="medium"
-                color="primary"
-                variant="outlined"
-                sx={{ margin: "0 !important" }}
-              />
+              <QuestionTopicChip topic={current.topic} />
               {trainerGrade === "know" ? (
                 <Chip
                   size="medium"
@@ -523,7 +553,7 @@ export default function Home() {
               </Stack>
             </Collapse>
           </Stack>
-        )}
+        ) : null}
       </DialogContent>
 
       <Box
@@ -590,7 +620,7 @@ export default function Home() {
                 color="secondary"
                 size="large"
                 aria-label="Следующий вопрос"
-                disabled={questionLoading || !current}
+                disabled={questionLoading || modalNotice !== null || !current}
                 startIcon={<NavigateNextRoundedIcon />}
                 onClick={() => getRandomQuestion()}
                 sx={{
@@ -619,7 +649,6 @@ export default function Home() {
       <Stack spacing={3}>
         <SitePageHeading
           title="Тренажёр вопросов"
-          subtitle="Тема — кнопками или списком; можно тренироваться по всей базе. Новые карточки — на странице «Новая карточка»."
         />
 
         {message ? (
@@ -632,12 +661,6 @@ export default function Home() {
 
         <Card elevation={0}>
           <CardContent sx={{ p: { xs: 2, sm: 3 } }}>
-            <Typography variant="h6" sx={{ mb: 1 }}>
-              Случайный вопрос
-            </Typography>
-            <Typography variant="body1" color="text.secondary" sx={{ mb: 2, fontSize: { xs: "0.9375rem" } }}>
-              Получите карточку из базы и проверьте себя.
-            </Typography>
 
             <Stack spacing={2} sx={{ mb: 2 }}>
               <TopicChipFilter
@@ -675,14 +698,11 @@ export default function Home() {
               color="secondary"
               size="large"
               startIcon={<CasinoRoundedIcon />}
-              onClick={getRandomQuestion}
+              onClick={() => void getRandomQuestion()}
             >
               Вопрос
             </Button>
 
-            <Typography variant="body1" color="text.secondary" sx={{ mt: 2 }}>
-              Нажмите «Вопрос», чтобы открыть карточку на весь экран.
-            </Typography>
           </CardContent>
         </Card>
       </Stack>

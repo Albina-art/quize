@@ -65,7 +65,7 @@ export default function SitePageHeading({
       >
         {title}
       </Typography>
-      {subtitle ? (
+      {subtitle && (
         <Typography
           variant="body1"
           color="text.secondary"
@@ -79,7 +79,7 @@ export default function SitePageHeading({
         >
           {subtitle}
         </Typography>
-      ) : null}
+      )}
     </Stack>
   );
 }
