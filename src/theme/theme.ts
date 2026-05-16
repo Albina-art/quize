@@ -76,8 +76,9 @@ export function createAppTheme() {
         fontSize: "1.25rem",
         lineHeight: 1.62,
         "@media (min-width:600px)": {
-          fontSize: "1.5rem",
-          lineHeight: 1.68,
+          fontSize: "1.25rem",
+          lineHeight: 1.6,
+          fontWeight: 300,
         },
       },
       body2: {

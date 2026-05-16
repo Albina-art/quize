@@ -52,7 +52,7 @@ export default function LoginPageClient() {
   };
 
   return (
-    <QuizPageShell maxWidth="sm">
+    <QuizPageShell maxWidth="sm" sxContainer={{ pt: {xs: 2, sm: 5} }}>
       <Card variant="outlined" sx={{ borderRadius: 2 }}>
         <CardContent sx={{ p: { xs: 2, sm: 3 } }}>
           <Stack spacing={2} component="form" onSubmit={onSubmit}>
