@@ -89,6 +89,14 @@ export const theoryTopics: TheoryTopic[] = [
     trainerTopic: "React: виртуальный DOM",
   },
   {
+    slug: "react-19",
+    title: "Нововведения React 19",
+    description:
+      "Actions и хуки форм (useActionState, useFormStatus, useOptimistic), хук use, Suspense, ref без forwardRef, метатеги в компонентах, React Compiler, Server Actions и другое.",
+    illustration: "/theory/react-js-cover.png",
+    mcqTopic: "React 19: нововведения",
+  },
+  {
     slug: "rendering",
     title: "Рендеринг в браузере и React",
     description:

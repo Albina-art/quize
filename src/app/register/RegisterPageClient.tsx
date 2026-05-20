@@ -25,7 +25,7 @@ export default function RegisterPageClient() {
   const [error, setError] = useState<string | null>(null);
   const [loading, setLoading] = useState(false);
 
-  const onSubmit = async (e: FormEvent) => {
+  const handleSubmit = async (e: FormEvent) => {
     e.preventDefault();
     setError(null);
     setLoading(true);
@@ -55,7 +55,7 @@ export default function RegisterPageClient() {
     <QuizPageShell maxWidth="sm">
       <Card variant="outlined" sx={{ borderRadius: 2 }}>
         <CardContent sx={{ p: { xs: 2, sm: 3 } }}>
-          <Stack spacing={2} component="form" onSubmit={onSubmit}>
+          <Stack spacing={2} component="form" onSubmit={handleSubmit}>
             <Typography variant="h5" component="h1" sx={{ fontWeight: 700 }}>
               Регистрация
             </Typography>

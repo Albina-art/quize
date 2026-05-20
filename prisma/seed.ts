@@ -185,6 +185,8 @@ const tsUtilityTypesTopic = "TypeScript: утилитарные типы";
 
 const reactTsTypesTopic = "React: типы и TypeScript";
 
+const react19McqTopic = "React 19: нововведения";
+
 const browserPipelineQuestions = [
   {
     topic: browserPipelineTopic,
@@ -775,6 +777,73 @@ for (var i = 0; i < 3; i++) {
       "Замыкание: внешняя функция скрывает переменные, публичный API возвращает методы",
       "Глобальный объект window",
       "Только Promise",
+    ],
+    correctIndex: 1,
+  },
+  {
+    topic: react19McqTopic,
+    question:
+      "Какой хук позволяет оптимистично обновлять UI (показывать результат до завершения асинхронного действия)?",
+    options: ["useActionState", "useFormStatus", "useOptimistic", "useDeferredValue"],
+    correctIndex: 2,
+  },
+  {
+    topic: react19McqTopic,
+    question:
+      "Что из перечисленного НЕ является правильным утверждением про хук use в React 19?",
+    options: [
+      "Он может читать значение из контекста (как useContext).",
+      "Его можно вызывать внутри условных операторов и циклов (в отличие от обычных хуков).",
+      "Он предназначен для создания побочных эффектов вместо useEffect.",
+      "При передаче промиса он приостанавливает рендер до разрешения промиса (работает с Suspense).",
+    ],
+    correctIndex: 2,
+  },
+  {
+    topic: react19McqTopic,
+    question: "Как в React 19 передать ref в функциональный компонент?",
+    options: [
+      "По-прежнему обязательно использовать forwardRef.",
+      "ref передаётся как обычный проп, без forwardRef.",
+      "Нужен только useRef внутри дочернего компонента, снаружи ref не передают.",
+      "ref нельзя передавать в функциональные компоненты.",
+    ],
+    correctIndex: 1,
+  },
+  {
+    topic: react19McqTopic,
+    question:
+      "Какой хук в компоненте кнопки внутри <form> позволяет узнать, выполняется ли сейчас отправка формы?",
+    options: ["useActionState", "useFormStatus", "useOptimistic", "usePending"],
+    correctIndex: 1,
+  },
+  {
+    topic: react19McqTopic,
+    question:
+      "Какой хук подходит как основной для асинхронной отправки формы с серверной валидацией: состояние результата, ошибки и флаг pending?",
+    options: ["useFormStatus", "useTransition", "useActionState", "useReducer"],
+    correctIndex: 2,
+  },
+  {
+    topic: react19McqTopic,
+    question:
+      "Что из перечисленного относится к новой встроенной возможности React 19 (без отдельных библиотек для этого API)?",
+    options: [
+      "Маршрутизация между страницами.",
+      "Рендеринг <title>, <meta>, <link> в компонентах с переносом в <head> (в поддерживаемых средах).",
+      "Встроенное глобальное состояние уровня Redux.",
+      "Встроенные анимации при монтировании компонента.",
+    ],
+    correctIndex: 1,
+  },
+  {
+    topic: react19McqTopic,
+    question: "Что обещает React Compiler (ранее React Forget)?",
+    options: [
+      "Полную замену React другим фреймворком.",
+      "Автоматическую мемоизацию там, где безопасно, снижая потребность в useMemo, useCallback и React.memo.",
+      "Компиляцию компонентов в нативный машинный код.",
+      "Удаление хуков из публичного API React.",
     ],
     correctIndex: 1,
   },
